@@ -55,7 +55,7 @@ const h = require('hyperterse/react')
 h.div`Hello World!`
 ```
 ```js
-div`hi`
+h.div`hi`
   // chained .propertyFunctions() define attributes
   .id('box')
   .onclick(e => alert('Hi!'))
