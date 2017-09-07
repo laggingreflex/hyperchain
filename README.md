@@ -1,8 +1,8 @@
-# hyperterse
+# hyperchain
 
-Like [hyperscript] (+[helpers]) but even terser using [Tagged Template Literals], [method chaining], and [ES6 Proxy].
+An extremely terse syntax for [hyperscript]. Like [hyperscript]\(+[helpers]) but on steroids, using [Tagged Template Literals] and [ES6 Proxy] [method chaining].
 
-<small>**Use only where ES6 ([template-literals][template-literals-support], [proxy][proxy-support]) supported.**</small>
+<small>**Use only where ES6 ([template-literals][template-literals-support], [proxy][proxy-support]) are available.** </small>
 
 [hyperscript]: https://github.com/dominictarr/hyperscript
 [helpers]: https://www.npmjs.com/package/hyperscript-helpers
@@ -18,7 +18,7 @@ Like [hyperscript] (+[helpers]) but even terser using [Tagged Template Literals]
 ## Install
 
 ```sh
-npm i hyperterse
+npm i hyperchain
 ```
 
 ## Usage
@@ -27,22 +27,23 @@ Include:
 
 ```js
 import {createElement} from 'react'
-import hyperterse from 'hyperterse'
+import hyperchain from 'hyperchain'
 
-const h = hyperterse(createElement)
+const h = hyperchain(createElement)
 
 const {div, span} = h
 ```
 or with helpers (available: react, preact)
 ```js
-import h, { div, span } from  'hyperterse/react'
+import h, { div, span } from  'hyperchain/react'
 ```
 
 Usage:
 
 ```js
-const { div, span } = require('hyperterse/react')
-
+h.div`Hello World!`
+```
+```js
 // Template literals define innerText
 div`Hello World!`            // => <div>Hello World!</div>
 // .properties define classes
@@ -51,31 +52,28 @@ div.some.class`Hello World!` // => <div class="some class">…
 ```
 
 ```js
-const h = require('hyperterse/react')
-h.div`Hello World!`
-```
-```js
-h.div`hi`
+h.div
   // chained .propertyFunctions() define attributes
   .id('box')
   .onclick(e => alert('Hi!'))
   .style({color: 'blue'})
+  `Hello world!`
 ```
 ```js
-h.table(
+table(
   // first-level function defines children
-  h.thead(
-    h.tr(h.th`Header 1`, h.th`Header 2`, h.th`Header 3`)
+  thead(
+    tr(th`Header 1`, th`Header 2`, th`Header 3`)
   )
-  h.tbody(
-    h.tr(h.td`Column 1`, h.td`Row 1`, h.td`Column 3`)
-    h.tr(h.td`Column 1`, h.td`Row 2`, h.td`Column 3`)
+  tbody(
+    tr(td`Column 1`, td`Row 1`, td`Column 3`)
+    tr(td`Column 1`, td`Row 2`, td`Column 3`)
   )
 )
 ```
 
 ## Libraries used
 
-* **[shackles]** for [method chaining]
+* **[chain-anything]** for ES6 [chain-anything]
 
-[shackles]: https://github.com/raineorshine/shackles
+[chain-anything]: https://github.com/laggingreflex/chain-anything

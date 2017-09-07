@@ -1,2 +1,2 @@
 global.assert = require('assert')
-global.hyperterse = require('..')
+global.hyperchain = require('..')

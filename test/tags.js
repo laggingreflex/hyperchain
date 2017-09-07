@@ -1,6 +1,6 @@
 describe('tags', () => {
   it('h.div`Hello World!`', (done) => {
-    const h = hyperterse((tagName, props, children) => {
+    const h = hyperchain((tagName, props, children) => {
       assert.equal(tagName, 'div');
       assert.deepEqual(props, {});
       assert.deepEqual(children, ['Hello World!']);
@@ -9,7 +9,7 @@ describe('tags', () => {
     h.div `Hello World!`;
   });
   it('div`Hello World!`', (done) => {
-    const { div } = hyperterse((tagName, props, children) => {
+    const { div } = hyperchain((tagName, props, children) => {
       assert.equal(tagName, 'div');
       assert.equal(children[0], 'Hello World!');
       done();
@@ -17,7 +17,7 @@ describe('tags', () => {
     div `Hello World!`;
   });
   it('div`Hello ${World}!`', (done) => {
-    const { div } = hyperterse((tagName, props, children) => {
+    const { div } = hyperchain((tagName, props, children) => {
       assert.equal(tagName, 'div');
       assert.equal(children[0], 'Hello World!');
       done();

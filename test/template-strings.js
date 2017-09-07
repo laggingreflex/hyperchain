@@ -1,6 +1,6 @@
 describe('template strings', () => {
   it('h.div`Hello ${World}!`', (done) => {
-    const h = hyperterse((tagName, props, children) => {
+    const h = hyperchain((tagName, props, children) => {
       assert.equal(tagName, 'div');
       assert.deepEqual(props, {});
       assert.deepEqual(children, ['Hello World!']);

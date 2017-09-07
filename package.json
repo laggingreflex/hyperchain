@@ -1,9 +1,9 @@
 {
-  "name": "hyperterse",
+  "name": "hyperchain",
   "version": "0.0.0",
-  "description": "Terse syntax for hyperscript",
+  "description": "hyperscript with chaining",
   "main": "index.js",
-  "repository": "laggingreflex/hyperterse",
+  "repository": "laggingreflex/hyperchain",
   "scripts": {
     "test": "mochista"
   },
