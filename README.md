@@ -31,13 +31,14 @@ npm i hyperchain
 import { createElement } from 'react'
 import hyperchain from 'hyperchain'
 
-const h = hyperchain(createElement)
+const h = hyperchain(createElement, opts)
 // or
-const {div, span} = hyperchain(createElement);
+const {div, span} = hyperchain(createElement, opts);
 ```
 or with helpers (available: react, preact)
 ```js
-import h, { div, span } from  'hyperchain/react'
+const { div, span } =  require('hyperchain/react')(opts)
+const { div, span } =  require('hyperchain/preact')(opts)
 ```
 
 ### API
