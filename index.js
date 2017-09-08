@@ -1,69 +1,56 @@
+const dashify = require('dashify');
 const _ = require('./utils');
-const chain = require('chain-anything');
 
+const symbol = Symbol('symbol');
 
-module.exports = hh => {
+module.exports = (hh, opts = {}) => {
+  const mergeDeep = Boolean(opts.mergeDeep !== false);
+  return new Proxy(hh, {
+    apply: (hh, that, args) => {
+      const [component, ...rest] = args;
+      if (!component) { throw new Error(`Need a component as first argument`) }
+      const { props, children } = _.getPropsAndChildren(rest);
+      return hh(component, props, children);
+    },
+    get: (t, component) => {
+      const h = (...args) => {
+        const { props, children } = _.getPropsAndChildren(args);
+        const ret = hh(component, props, children) || {};
+        ret[symbol] = true;
+        return ret;
+      }
+      return re();
 
-  let component;
-  const props = {};
-
-  const mergeProps = (key, val) => _.mergeProps(props, {
-    [key]: val
-  });
-
-  const h = (component, ...args) => {
-    const { props, children } = _.getPropsAndChildren(args);
-    // console.log(`hh()`, { component, props, children });
-    return hh(component, props, children);
-  }
-
-  let prevKey;
-
-  const setPrevKeyClass = () => {
-    if (prevKey) {
-      // console.log('setPrevKeyClass', prevKey);
-      mergeProps('class', prevKey)
-      prevKey = null;
-    }
-  }
-
-  return chain({
-    [chain.symbol.apply](...args) {
-      if (_.isTTL(args)) {
-        setPrevKeyClass();
-        return h(component, props, [_.parseTTL(args)]);
-      } else {
-        if (!args.length) {
-          setPrevKeyClass();
-          return h(component || 'div', props);
-        } else if (args.length === 1) {
-          const [arg] = args;
-          if (prevKey) {
-            mergeProps(prevKey, arg);
-            prevKey = null;
+      function re(prev = [], prevProp) {
+        if (typeof prevProp !== 'string') {
+          prevProp = null;
+        }
+        const getRetFn = prop => (...args) => {
+          if (args.length && args.some(_ => _[symbol])) {
+            return h(_.mergeProps({}, _.ifToClass(prevProp), ...prev, mergeDeep), args);
+          } else if (_.isTTL(args)) {
+            const children = [_.parseTTL(args)];
+            const props = _.mergeProps({}, _.ifToClass(prevProp), ...prev, mergeDeep);
+            return h(props, children);
+          } else if (prop && args.length === 1) {
+            const arg = args[0];
+            return re([{
+              [prop]: arg
+            }, ...prev]);
           } else {
-            setPrevKeyClass();
-            component = arg;
+            return h(_.mergeProps({}, ...prev, mergeDeep), args);
           }
-        } else {
-          setPrevKeyClass();
-          return h(...args);
-        }
+        };
+        return new Proxy(() => {}, {
+          apply: (t, tt, args) => getRetFn(prevProp)(...args),
+          get: (t, prop, recv) => {
+            if (opts.dashifyClassnames) {
+              prop = dashify(prop);
+            }
+            return re([{}, _.ifToClass(prevProp), ...prev], prop);
+          },
+        });
       }
     },
-    [chain.symbol.get](key) {
-      // console.log(`key:`, key);
-      if (component) {
-        if (prevKey) {
-          _.mergeProps(props, { class: prevKey });
-          prevKey = key;
-        } else {
-          prevKey = key;
-        }
-      } else {
-        component = 'div';
-      }
-    },
-  })
-
+  });
 }

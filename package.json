@@ -8,11 +8,12 @@
     "test": "mochista"
   },
   "dependencies": {
-    "chain-anything": "^0.0.0",
-    "is-plain-object": "^2.0.4",
+    "dashify": "^0.2.2",
+    "merge-deep": "^3.0.0",
     "ority": "^0.3.3"
   },
   "devDependencies": {
-    "mochista": "^0.13.0"
+    "mochista": "^0.13.0",
+    "testdouble": "^3.2.4"
   }
 }
