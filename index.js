@@ -15,6 +15,10 @@ module.exports = (hh, opts = {}) => {
     get: (t, component) => {
       const h = (...args) => {
         const { props, children } = _.getPropsAndChildren(args);
+        if (opts.style && props.class && props.class.length) {
+          const additionalClasses = Object.keys(opts.style).filter(_ => props.class.some(__ => _ === __));
+          props.class.push(...(additionalClasses.map(_ => opts.style[_])));
+        }
         const ret = hh(component, props, children) || {};
         ret[symbol] = true;
         return ret;

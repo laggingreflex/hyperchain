@@ -110,7 +110,7 @@ describe('opts.mergeDeep', () => {
 });
 
 
-describe.only('children', () => {
+describe('children', () => {
   it('hc.div(a, b)', () => {
     const h = td.function();
     const hc = hyperchain(h);
@@ -158,6 +158,19 @@ describe.only('children', () => {
 
 
 
+
+
+
+
+
+describe('opts.style', () => {
+  it('hc.div.class.id(id)`hi`', () => {
+    const h = td.function();
+    const hc = hyperchain(h, { style: { a: 'aa' } });
+    hc.div.a `hi`;
+    td.verify(h('div', { class: ['a', 'aa'] }, ['hi']));
+  });
+});
 
 
 
