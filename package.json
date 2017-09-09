@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "dashify": "^0.2.2",
-    "merge-deep": "^3.0.0",
+    "deepmerge": "^1.5.1",
     "ority": "^0.3.3"
   },
   "devDependencies": {

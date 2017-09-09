@@ -1,18 +1,9 @@
 const ority = require('ority');
-const mergeDeep = require('merge-deep');
-const isPlainObject = require('is-plain-object');
+const deepmerge = require('deepmerge');
 const _ = exports;
 
 _.arrify = _ => _ ? Array.isArray(_) ? _ : [_] : [];
-// _.arrifyClass = _ => _ ? Array.isArray(_) ? _ : _ ? [...((_ || '').split(/ +/g) || [])] : [] : [];
-_.arrifyClass = _ => {
-  try {
-    return _ ? Array.isArray(_) ? _ : _ ? [...((_ || '').split(/ +/g) || [])] : [] : [];
-  } catch (error) {
-    console.log(`_:`, _);
-    throw error;
-  }
-}
+_.arrifyClass = _ => _ ? Array.isArray(_) ? _ : _ ? [...((_ || '').split(/ +/g) || [])] : [] : [];
 _.ifToClass = _ => _ && { class: _ } || {};
 
 _.getPropsAndChildren = args => {
@@ -54,10 +45,10 @@ _.parseIfTTL = args => _.isTTL(args) ? _.parseTTL(...args) : args;
 
 _.mergeProps = (a, ...rest) => {
   const last = rest[rest.length - 1];
-  let shouldMergeDeep = false;
+  let shouldMerge = false;
   if (typeof last === 'boolean') {
     rest = rest.slice(0, -1);
-    shouldMergeDeep = last;
+    shouldMerge = last;
   }
   for (let i = rest.length - 1; i >= 0; i--) {
     const b = rest[i];
@@ -69,8 +60,14 @@ _.mergeProps = (a, ...rest) => {
           console.log({ a, b });
           throw error
         }
-      } else if (shouldMergeDeep && (isPlainObject(a[key]) || isPlainObject(b[key]))) {
-        a[key] = mergeDeep({}, a[key], b[key]);
+      } else if (shouldMerge) {
+        if (Array.isArray(a[key]) || Array.isArray(b[key])) {
+          a[key] = b[key];
+        } else if (typeof a[key] === 'object' || typeof b[key] === 'object') {
+          a[key] = deepmerge.all([{}, a[key] || {}, b[key] || {}]);
+        } else {
+          a[key] = b[key];
+        }
       } else {
         a[key] = b[key];
       }
