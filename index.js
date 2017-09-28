@@ -10,6 +10,9 @@ module.exports = (hh, opts = {}) => {
       const [component, ...rest] = args;
       if (!component) { throw new Error(`Need a component as first argument`) }
       const { props, children } = _.getPropsAndChildren(rest);
+      if (Array.isArray(props.class)) {
+        props.class = props.class.join(' ')
+      }
       return hh(component, props, children);
     },
     get: (t, component) => {
@@ -18,6 +21,9 @@ module.exports = (hh, opts = {}) => {
         if (opts.style && props.class && props.class.length) {
           const additionalClasses = Object.keys(opts.style).filter(_ => props.class.some(__ => _ === __));
           props.class.push(...(additionalClasses.map(_ => opts.style[_])));
+        }
+        if (Array.isArray(props.class)) {
+          props.class = props.class.join(' ')
         }
         const ret = hh(component, props, children) || {};
         ret[symbol] = true;
