@@ -34,13 +34,13 @@ describe('classes', () => {
     const h = td.function();
     const hc = hyperchain(h);
     hc.div.class `hi`;
-    td.verify(h('div', { class: ['class'] }, ['hi']));
+    td.verify(h('div', { class: 'class' }, ['hi']));
   });
   it('hc.div.some.class`hi`', () => {
     const h = td.function();
     const hc = hyperchain(h);
     hc.div.some.class `hi`;
-    td.verify(h('div', { class: ['some', 'class'] }, ['hi']));
+    td.verify(h('div', { class: 'some class' }, ['hi']));
   });
 });
 
@@ -71,8 +71,8 @@ describe('separation', () => {
     const { div } = hc;
     div.class `hi`;
     div.class2 `hi`;
-    td.verify(h('div', { class: ['class'] }, ['hi']));
-    td.verify(h('div', { class: ['class2'] }, ['hi']));
+    td.verify(h('div', { class: 'class' }, ['hi']));
+    td.verify(h('div', { class: 'class2' }, ['hi']));
   });
 });
 
@@ -87,8 +87,8 @@ describe('nesting', () => {
     const b = base.b
     a `a`
     b `b`
-    td.verify(h('div', { class: ['base', 'a'] }, ['a']));
-    td.verify(h('div', { class: ['base', 'b'] }, ['b']));
+    td.verify(h('div', { class: 'base a' }, ['a']));
+    td.verify(h('div', { class: 'base b' }, ['b']));
   });
 });
 
@@ -148,9 +148,9 @@ describe('children', () => {
     const h1 = hyperchain(t1);
     const h2 = hyperchain(t2);
     const t2r = { t: 2 };
-    td.when(t2('div', { class: ['class2'] }, ['2'])).thenReturn(t2r);
+    td.when(t2('div', { class: 'class2' }, ['2'])).thenReturn(t2r);
     h1.div.class1(h2.div.class2 `2`);
-    td.verify(t1('div', { class: ['class1'] }, [t2r]));
+    td.verify(t1('div', { class: 'class1' }, [t2r]));
   });
 });
 
@@ -168,7 +168,7 @@ describe('opts.style', () => {
     const h = td.function();
     const hc = hyperchain(h, { style: { a: 'aa' } });
     hc.div.a `hi`;
-    td.verify(h('div', { class: ['a', 'aa'] }, ['hi']));
+    td.verify(h('div', { class: 'a aa' }, ['hi']));
   });
 });
 
@@ -182,7 +182,7 @@ describe('full', () => {
     const hc = hyperchain(h);
     hc.div.class.id('id')
     `hi`;
-    td.verify(h('div', { class: ['class'], id: 'id' }, ['hi']));
+    td.verify(h('div', { class: 'class', id: 'id' }, ['hi']));
   });
 });
 
