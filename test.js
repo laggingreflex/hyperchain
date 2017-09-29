@@ -27,6 +27,12 @@ describe('tags', () => {
     hc.div `hi`;
     td.verify(h('div', {}, ['hi']));
   });
+  it.skip('hc.div({props}, [hi])', () => {
+    const h = td.function();
+    const hc = hyperchain(h);
+    hc.div({ props: 'props' }, ['hi']);
+    td.verify(h('div', { props: 'props' }, ['hi']));
+  });
 });
 
 describe('classes', () => {
