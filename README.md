@@ -1,21 +1,37 @@
 # hyperchain
+[![npm](https://img.shields.io/npm/v/hyperchain.svg)](https://www.npmjs.com/package/hyperchain)
 
-An extremely terse syntax for [hyperscript].
+[hyperscript]-like DOM builder with chaining, composition, and reusability. Inspired by [hyperscript-helpers].
 
-[hyperscript]\(+[helpers]) on steroids!
+## Features
 
-<small>**Uses ES6 features, use only where supported ([template-literals][template-literals-support], [proxy][proxy-support])** </small>
+* Property chaining sets tag-name and class-names
+
+* Method chaining sets attributes
+
+* Template literals sets innerText
+
+* Compose and reuse components (like [styled-components])
+
+* Apply [CSS Modules] (like [hyperstyles])
+
+<small>**Note: Uses ES6 features ([Proxy][proxy-support], [Tagged Template Literals][ttl-support]), use only where browser/env supports it.** </small>
 
 [hyperscript]: https://github.com/dominictarr/hyperscript
-[helpers]: https://www.npmjs.com/package/hyperscript-helpers
+[hyperscript-helpers]: https://www.npmjs.com/package/hyperscript-helpers
 
-[Tagged Template Literals]: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Template_literals#Tagged_template_literals
-[template-literals-support]: http://caniuse.com/#feat=template-literals
-
-[ES6 Proxy]: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Proxy
+[Proxy]: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Proxy
 [proxy-support]: http://caniuse.com/proxy
 
+[Tagged Template Literals]: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Template_literals#Tagged_template_literals
+[ttl-support]: http://caniuse.com/#feat=template-literals
+
 [method chaining]: https://schier.co/blog/2013/11/14/method-chaining-in-javascript.html
+
+[CSS Modules]: https://github.com/css-modules/css-modules
+[hyperstyles]: https://github.com/colingourlay/hyperstyles
+
+[styled-components]: https://github.com/styled-components/styled-components
 
 ## Install
 
@@ -24,8 +40,6 @@ npm i hyperchain
 ```
 
 ## Usage
-
-### Include
 
 ```js
 import { createElement } from 'react'
@@ -44,9 +58,27 @@ const { div, span } =  require('hyperchain/preact')(opts)
 ### API
 
 ```js
-hyperchain(h).tagName[...classes][...attributes()]`innerText`
-hyperchain(h).tagName[...classes][...attributes()](...children)
+hyperchain(createElement, options)
 ```
+
+* **`createElement`** `[function]` JSX/hyperscript reviver function
+* **`options`** `[object]`
+
+  * **`style`** `[object]` Uses [CSS Modules]-compatible styles object to add appropriate classnames. See [hyperstyles]
+  * **`dashifyClassnames`** `[boolean]` Turns `.className` to `class-name`
+
+```js
+h.tagName[...className][...attribute()]`innerText`
+h.tagName[...className][...attribute()](...children)
+h.tagName[...className][...attribute()]({...props}, [...children])
+```
+
+* **`tagName`** `[string]` Tag name to use, eg. `.div`
+* **`className`** `[string]` Class name to use, eg. `.someClass`
+* **`attribute`** `[string]` Attribute to set, eg. `.id(…)`
+* **`children`** `[array]` Child nodes
+* **`props`** `[object]` Attributes to set as an object, eg. `{id: …}`
+
 
 ### Examples
 
@@ -73,22 +105,35 @@ h.div
   `Hello world!`
 ```
 ```js
-// reusable & composable
-const div = h.div.baseClass.style({background: 'yellow'})
-const divRed = div.red.style({color: 'red'})
-const divBlue = div.blue.style({color: 'blue'})
-divRed`red text`    // => h('div', {class: ['base', 'red'], style: {background: 'yellow', color: 'red'}}, ['red text'])
-divBlue`blue text`  // => h('div', {class: ['base', 'blue'], style: {background: 'yellow', color: 'blue'}}, ['blue text'])
+// reusable components
+const yellowBase = h.div.base.style({background: 'yellow'})
+
+const redText = yellowBase.red.style({color: 'red'})
+redText `red text`
+// <div
+//   class="base red"
+//   style="background:yellow; color:red"
+// >
+//   red text
+// </div>
+
+const boldText = yellowBase.bold.style({fontWeight: 'bold'})
+boldText `bold text`
+// <div
+//   class="base bold"
+//   style="background:yellow; font-weight:bold"
+// >
+//   bold text
+// </div>
 ```
-```js
-table(
-  // first-level function defines children
-  thead(
-    tr(th`Header 1`, th`Header 2`, th`Header 3`)
-  )
-  tbody(
-    tr(td`Column 1`, td`Row 1`, td`Column 3`)
-    tr(td`Column 1`, td`Row 2`, td`Column 3`)
-  )
-)
-```
+
+## Libraries used
+
+
+* **[dashify]** to dashify classNames
+* **[deepmerge]** to merge props
+* **[ority]** to infer arguments better
+
+[dashify]: https://github.com/jonschlinkert/dashify
+[deepmerge]: https://github.com/KyleAMathews/deepmerge
+[ority]: https://github.com/laggingreflex/ority
