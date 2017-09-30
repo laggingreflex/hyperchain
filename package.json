@@ -10,7 +10,7 @@
   "dependencies": {
     "dashify": "^0.2.2",
     "deepmerge": "^1.5.1",
-    "ority": "^0.3.3"
+    "ority": "^0.5.0"
   },
   "devDependencies": {
     "mochista": "^0.13.0",
