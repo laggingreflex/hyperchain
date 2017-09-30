@@ -35,22 +35,37 @@ module.exports = (hh, opts = {}) => {
         if (typeof prevProp !== 'string') {
           prevProp = null;
         }
+
         const getRetFn = prop => (...args) => {
-          if (args.length && args.some(_ => _[symbol])) {
-            return h(_.mergeProps({}, _.ifToClass(prevProp), ...prev, mergeDeep), args);
-          } else if (_.isTTL(args)) {
+          if (_.isTTL(args)) {
             const children = [_.parseTTL(args)];
             const props = _.mergeProps({}, _.ifToClass(prevProp), ...prev, mergeDeep);
             return h(props, children);
-          } else if (prop && args.length === 1) {
+          } else if (prop && args.length === 1 && (
+              typeof args[0] === 'string' || 'function' === typeof args[0]
+              || prop === 'style'
+            )) {
+            // an attribute
             const arg = args[0];
             return re([{
               [prop]: arg
-            }, ...prev]);
+            }, ...prev])
+          } else if (
+            // all arguments are nodes/strings
+            args.some(arg => typeof arg === 'string' || symbol in arg || 'nodeName' in arg)
+            && !args.some(arg => !(typeof arg === 'string' || symbol in arg || 'nodeName' in arg))
+          ) {
+            const props = _.mergeProps({}, _.ifToClass(prevProp), ...prev, mergeDeep);
+            const children = args;
+            return h(props, children);
           } else {
-            return h(_.mergeProps({}, ...prev, mergeDeep), args);
+            // default: [props, children] or [props] or [children]
+            let { props, children } = _.getPropsAndChildren(args);
+            props = _.mergeProps({}, _.ifToClass(prevProp), ...prev, props, mergeDeep);
+            return h(props, children);
           }
         };
+
         return new Proxy(() => {}, {
           apply: (t, tt, args) => getRetFn(prevProp)(...args),
           get: (t, prop, recv) => {
