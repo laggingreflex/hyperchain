@@ -37,7 +37,10 @@ module.exports = (hh, opts = {}) => {
         }
 
         const getRetFn = prop => (...args) => {
-          if (_.isTTL(args)) {
+          if (!args.length) {
+            const props = _.mergeProps({}, _.ifToClass(prevProp), ...prev, mergeDeep);
+            return h(props, []);
+          } else if (_.isTTL(args)) {
             const children = [_.parseTTL(args)];
             const props = _.mergeProps({}, _.ifToClass(prevProp), ...prev, mergeDeep);
             return h(props, children);
@@ -52,8 +55,8 @@ module.exports = (hh, opts = {}) => {
             }, ...prev])
           } else if (
             // all arguments are nodes/strings
-            args.some(arg => typeof arg === 'string' || symbol in arg || 'nodeName' in arg)
-            && !args.some(arg => !(typeof arg === 'string' || symbol in arg || 'nodeName' in arg))
+            args.some(arg => (arg !== undefined && arg !== null) && (typeof arg === 'string' || arg[symbol] || arg['nodeName']))
+            && !args.some(arg => !((arg !== undefined && arg !== null) && (typeof arg === 'string' || arg[symbol] || arg['nodeName'])))
           ) {
             const props = _.mergeProps({}, _.ifToClass(prevProp), ...prev, mergeDeep);
             const children = args;

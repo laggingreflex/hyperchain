@@ -286,3 +286,20 @@ describe('utils', () => {
     })
   });
 });
+
+
+describe('edge cases', () => {
+  it('hc.div()', () => {
+    const h = td.function();
+    const hc = hyperchain(h);
+    hc.div();
+    td.verify(h('div', {}, []));
+  });
+  it('hc.div(undefined)', () => {
+    const h = td.function();
+    const hc = hyperchain(h);
+    hc.div(undefined);
+    td.verify(h('div', {}, []));
+  });
+});
+
