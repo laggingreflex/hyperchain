@@ -301,5 +301,11 @@ describe('edge cases', () => {
     hc.div(undefined);
     td.verify(h('div', {}, []));
   });
+  it('hc.div(hi, undefined, hi)', () => {
+    const h = td.function();
+    const hc = hyperchain(h);
+    hc.div('hi', undefined, 'hi');
+    td.verify(h('div', {}, ['hi', 'hi']));
+  });
 });
 

@@ -37,6 +37,7 @@ module.exports = (hh, opts = {}) => {
         }
 
         const getRetFn = prop => (...args) => {
+          args = args.filter(Boolean);
           if (!args.length) {
             const props = _.mergeProps({}, _.ifToClass(prevProp), ...prev, mergeDeep);
             return h(props, []);
