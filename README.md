@@ -66,6 +66,7 @@ hyperchain(createElement, options)
 
   * **`style`** `[object]` Uses [CSS Modules]-compatible styles object to add appropriate classnames. See [hyperstyles]
   * **`dashifyClassnames`** `[boolean]` Turns `.className` to `class-name`
+  * **`tagClass`** `[boolean]` Adds tag-name as an additional class-name (which is also `opts.style` aware)
 
 ```js
 h.tagName[...className][...attribute()]`innerText`

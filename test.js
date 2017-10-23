@@ -122,6 +122,28 @@ describe('opts.mergeDeep', () => {
 });
 
 
+describe.only('opts.opts.tagClass', () => {
+  it('should', () => {
+    const h = td.function();
+    const hc = hyperchain(h, { tagClass: true });
+    hc.div `hi`;
+    td.verify(h('div', { class: 'div' }, ['hi']));
+  });
+  it('should with style', () => {
+    const h = td.function();
+    const hc = hyperchain(h, { style: { div: 'hash' }, tagClass: true });
+    hc.div `hi`;
+    td.verify(h('div', { class: 'div hash' }, ['hi']));
+  });
+  it('shouldnt', () => {
+    const h = td.function();
+    const hc = hyperchain(h, { tagClass: false });
+    hc.div `hi`;
+    td.verify(h('div', {}, ['hi']));
+  });
+});
+
+
 describe('children', () => {
   it('hc.div(a, b)', () => {
     const h = td.function();
@@ -308,4 +330,3 @@ describe('edge cases', () => {
     td.verify(h('div', {}, ['hi', 'hi']));
   });
 });
-
