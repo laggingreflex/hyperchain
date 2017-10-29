@@ -122,7 +122,7 @@ describe('opts.mergeDeep', () => {
 });
 
 
-describe.only('opts.opts.tagClass', () => {
+describe('opts.opts.tagClass', () => {
   it('should', () => {
     const h = td.function();
     const hc = hyperchain(h, { tagClass: true });
