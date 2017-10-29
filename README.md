@@ -7,8 +7,6 @@
 
 * Property chaining sets tag-name and class-names
 
-* Method chaining sets attributes
-
 * Template literals sets innerText
 
 * Compose and reuse components (like [styled-components])
@@ -69,14 +67,13 @@ hyperchain(createElement, options)
   * **`tagClass`** `[boolean]` Adds tag-name as an additional class-name (which is also `opts.style` aware)
 
 ```js
-h.tagName[...className][...attribute()]`innerText`
-h.tagName[...className][...attribute()](...children)
-h.tagName[...className][...attribute()]({...props}, [...children])
+h.tagName[...className]`innerText`
+h.tagName[...className](...children)
+h.tagName[...className]({...props}, [...children])
 ```
 
 * **`tagName`** `[string]` Tag name to use, eg. `.div`
 * **`className`** `[string]` Class name to use, eg. `.someClass`
-* **`attribute`** `[string]` Attribute to set, eg. `.id(…)`
 * **`children`** `[array]` Child nodes
 * **`props`** `[object]` Attributes to set as an object, eg. `{id: …}`
 
@@ -97,14 +94,6 @@ div.someClass`Hello World!`  // => <div class="someClass">…
 div.someClass`Hello World!`  // => <div class="some-class">…
 ```
 
-```js
-h.div
-  // chained .propertyFunctions() define attributes
-  .id('box')
-  .onclick(e => alert('Hi!'))
-  .style({color: 'blue'})
-  `Hello world!`
-```
 ```js
 // reusable components
 const yellowBase = h.div.base.style({background: 'yellow'})
