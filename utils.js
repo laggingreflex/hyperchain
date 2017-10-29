@@ -15,14 +15,14 @@ _.getPropsAndChildren = args => {
   } else {
     let { props, children } = ority(args, [{
       props: 'object',
-      children: ['string'],
+      children: ['string', 'number'],
     }, {
-      children: ['string'],
+      children: ['string', 'number'],
       props: 'object',
     }, {
       props: 'object',
     }, {
-      children: ['string'],
+      children: ['string', 'number'],
     }, {}]);
     props = props || {};
     children = _.arrify(children || []);
