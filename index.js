@@ -58,8 +58,9 @@ module.exports = (hh, opts = {}) => {
             const props = _.mergeProps({}, _.ifToClass(prevProp), ...prev, mergeDeep);
             return h(props, children);
           } else if (prop && args.length === 1 && (
-              typeof args[0] === 'string' || 'function' === typeof args[0]
+              typeof args[0] === 'function'
               || prop === 'style'
+              // || (typeof args[0] === 'string' && prevProp === 'attr')
             )) {
             // an attribute
             const arg = args[0];
