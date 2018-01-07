@@ -6,7 +6,7 @@ const symbol = Symbol('symbol');
 module.exports = (hh, opts = {}) => {
   const mergeDeep = Boolean(opts.mergeDeep !== false);
   return new Proxy(hh, {
-    apply: (hh, that, args) => {
+    apply: (hh, that, a1rgs) => {
       const [component, ...rest] = args;
       if (!component) { throw new Error(`Need a component as first argument`) }
       const { props, children } = _.getPropsAndChildren(rest);
