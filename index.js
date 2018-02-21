@@ -4,6 +4,9 @@ const _ = require('./utils');
 const symbol = Symbol('symbol');
 
 module.exports = (hh, opts = {}) => {
+  if (typeof hh !== 'function') {
+    throw new Error(`Need a reviver function (h/createElement). Provide one or use a helper (/react/preact/text)`);
+  }
   const mergeDeep = Boolean(opts.mergeDeep !== false);
   return new Proxy(hh, {
     apply: (hh, that, args) => {
