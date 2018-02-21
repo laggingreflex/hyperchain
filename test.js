@@ -6,7 +6,7 @@ const _ = require('./utils');
 const itDeepEqual = (fn, a, b) => it(`${a.map(_=>JSON.stringify(_))} => ${JSON.stringify(b)}`, () => assert.deepEqual(fn(...a), b));
 
 describe('basic', () => {
-  it('hc(div, {}, [hi])', () => {
+  it.skip('hc(div, {}, [hi])', () => {
     const h = td.function();
     const hc = hyperchain(h);
     hc('div', {}, ['hi']);
@@ -328,5 +328,23 @@ describe('edge cases', () => {
     const hc = hyperchain(h);
     hc.div('hi', undefined, 'hi');
     td.verify(h('div', {}, ['hi', 'hi']));
+  });
+});
+
+
+
+describe('text', () => {
+  const h = require('./text')({});
+  it('h.div(hi)', () => {
+    assert.equal(
+      h.div('hi'),
+      `<div>hi</div>`
+    )
+  });
+  it('<div id="a" class="b"><div>hi</div></div>', () => {
+    assert.equal(
+      h.div({ id: 'a', class: 'b', data: null, onclick: () => {} }, [h.div('hi')]),
+      `<div id="a" class="b"><div>hi</div></div>`
+    )
   });
 });
