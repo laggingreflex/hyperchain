@@ -57,7 +57,7 @@ module.exports = (hh, opts = {}) => {
             const props = _.mergeProps({}, _.ifToClass(prevProp), ...prev, mergeDeep);
             return h(props, []);
           } else if (_.isTTL(args)) {
-            const children = [_.parseTTL(args)];
+            const children = _.parseTTL(args);
             const props = _.mergeProps({}, _.ifToClass(prevProp), ...prev, mergeDeep);
             return h(props, children);
           } else if (prop && args.length === 1 && (

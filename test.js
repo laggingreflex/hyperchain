@@ -289,7 +289,7 @@ describe('utils', () => {
   });
   describe('parseTTL', () => {
     it('throws on empty', () => assert.throws(_.parseTTL));
-    it('`Hello ${world}!` = Hello world!', () => ((...args) => assert.equal(_.parseTTL(args), 'Hello world!'))
+    it('`Hello ${world}!` = Hello world!', () => ((...args) => assert.deepEqual(_.parseTTL(args), ['Hello ', 'world', '!']))
       `Hello ${'world'}!`);
   });
   describe('mergeProps', () => {

@@ -11,7 +11,7 @@ _.getPropsAndChildren = args => {
     throw new Error(`Need an array of args, got: ${args} (${typeof args})`);
   }
   if (_.isTTL(args)) {
-    return { props: {}, children: [_.parseTTL(...args)] };
+    return { props: {}, children: _.parseTTL(...args) };
   } else {
     let { props, children } = ority(args, [{
       props: 'object',
@@ -40,7 +40,7 @@ _.getAttribValue = args => {
 
 // TTL = Tagged Template Literals, i.e: `...${...}...`
 _.isTTL = args => Array.isArray(args[0]) && 'raw' in args[0];
-_.parseTTL = ([str, ...keys]) => str.reduce((_, str, i) => _ + str + (keys[i] || ''), '');
+_.parseTTL = ([str, ...keys]) => str.reduce((children, child, i) => children.concat([child, keys[i] !== undefined && keys[i]].filter(Boolean)), []);
 _.parseIfTTL = args => _.isTTL(args) ? _.parseTTL(...args) : args;
 
 _.mergeProps = (a, ...rest) => {
