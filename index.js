@@ -17,7 +17,11 @@ module.exports = (hh, opts = {}) => {
         props.class = props.class.join(' ')
       }
       if (children && children.length) {
-        return hh(component, props, children);
+        if (children.length === 1 && typeof children[0] === 'function') {
+          return hh(component, props, children[0]);
+        } else {
+          return hh(component, props, children);
+        }
       } else {
         return hh(component, props);
       }

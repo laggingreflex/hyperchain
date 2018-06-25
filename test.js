@@ -348,3 +348,16 @@ describe('text', () => {
     )
   });
 });
+
+
+
+
+describe('Context API', () => {
+  it('hc(Consumer, {}, () => {})', () => {
+    const h = td.function();
+    const hc = hyperchain(h);
+    const fn = () => {};
+    hc('Consumer', {}, fn);
+    td.verify(h('Consumer', {}, fn));
+  });
+});
