@@ -17,6 +17,6 @@ function toString(tag, attrs, children) {
     .filter(Boolean)
     .join('')
     + `>`
-    + children.join('')
+    + (children || []).join('')
     + `</${tag}>`;
 }

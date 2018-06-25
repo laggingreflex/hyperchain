@@ -16,7 +16,11 @@ module.exports = (hh, opts = {}) => {
       if (Array.isArray(props.class)) {
         props.class = props.class.join(' ')
       }
-      return hh(component, props, children);
+      if (children && children.length) {
+        return hh(component, props, children);
+      } else {
+        return hh(component, props);
+      }
     },
     get: (t, component) => {
       const h = (...args) => {
@@ -40,7 +44,12 @@ module.exports = (hh, opts = {}) => {
         if (!props.class) {
           delete props.class;
         }
-        const ret = hh(component, props, children) || {};
+        let ret;
+        if (children && children.length) {
+          ret = hh(component, props, children) || {};
+        } else {
+          ret = hh(component, props) || {};
+        }
         ret[symbol] = true;
         return ret;
       }
