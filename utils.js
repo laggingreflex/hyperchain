@@ -3,8 +3,14 @@ const deepmerge = require('deepmerge');
 const _ = exports;
 
 _.arrify = _ => _ ? Array.isArray(_) ? _ : [_] : [];
-_.arrifyClass = _ => _ ? Array.isArray(_) ? _ : _ ? [...((_ || '').split(/ +/g) || [])] : [] : [];
 _.ifToClass = _ => _ && { class: _ } || {};
+_.arrifyClass = _ => {
+  if (!_) return [];
+  if (Array.isArray(_)) return _;
+  if (typeof _ === 'string') return _.split(/ +/g);
+  if (typeof _ === 'object') return Object.keys(_).reduce((c, k) => [...c, _[k] && k].filter(Boolean), []);
+  throw new Error(`Invalid class: ${typeof _} ${JSON.stringify(_)}`);
+};
 
 _.getPropsAndChildren = args => {
   if (!Array.isArray(args)) {

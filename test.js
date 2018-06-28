@@ -54,6 +54,12 @@ describe('classes', () => {
     hc.div.some.class `hi`;
     td.verify(h('div', { class: 'some class' }, ['hi']));
   });
+  it('hc.div({class: {a: true, b: false}})', () => {
+    const h = td.function();
+    const hc = hyperchain(h);
+    hc.div({ class: { a: true, b: false } }, ['hi']);
+    td.verify(h('div', { class: 'a' }, ['hi']));
+  });
 });
 
 
@@ -198,7 +204,7 @@ describe('children', () => {
 
 
 describe('opts.style', () => {
-  it('hc.div.class.id(id)`hi`', () => {
+  it('h({style: {a: aa}}).div', () => {
     const h = td.function();
     const hc = hyperchain(h, { style: { a: 'aa' } });
     hc.div.a `hi`;
