@@ -10,7 +10,10 @@ module.exports = (hh, opts = {}) => {
   const mergeDeep = Boolean(opts.mergeDeep !== false);
   return new Proxy(hh, {
     apply: (hh, that, args) => {
-      const [component, ...rest] = args;
+      let [component, ...rest] = args;
+      if (opts.elementMap && component in opts.elementMap) {
+        component = opts.elementMap[component];
+      }
       if (!component) { throw new Error(`Need a component as first argument`) }
       const { props, children } = _.getPropsAndChildren(rest);
       if (Array.isArray(props.class)) {
@@ -27,6 +30,9 @@ module.exports = (hh, opts = {}) => {
       }
     },
     get: (t, component) => {
+      if (opts.elementMap && component in opts.elementMap) {
+        component = opts.elementMap[component];
+      }
       const h = (...args) => {
         const { props, children } = _.getPropsAndChildren(args);
         if (!props.class) {

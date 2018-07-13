@@ -357,7 +357,6 @@ describe('text', () => {
 
 
 
-
 describe('Context API', () => {
   it('hc(Consumer, {}, () => {})', () => {
     const h = td.function();
@@ -365,5 +364,34 @@ describe('Context API', () => {
     const fn = () => {};
     hc('Consumer', {}, fn);
     td.verify(h('Consumer', {}, fn));
+  });
+});
+
+
+
+describe('elementMap', () => {
+  it('hc.x->y({}, hi)', () => {
+    const h = td.function();
+    const hc = hyperchain(h, { elementMap: { x: 'y' } });
+    hc.x('hi');
+    td.verify(h('y', {}, ['hi']));
+  });
+  it('hc.x->y.x({}, hi)', () => {
+    const h = td.function();
+    const hc = hyperchain(h, { elementMap: { x: 'y' } });
+    hc.x.x('hi');
+    td.verify(h('y', { class: 'x' }, ['hi']));
+  });
+  it('hc.y.x({}, hi)', () => {
+    const h = td.function();
+    const hc = hyperchain(h, { elementMap: { x: 'y' } });
+    hc.y.x('hi');
+    td.verify(h('y', { class: 'x' }, ['hi']));
+  });
+  it('hc(x->y, {}, hi)', () => {
+    const h = td.function();
+    const hc = hyperchain(h, { elementMap: { x: 'y' } });
+    hc('x', {}, ['hi']);
+    td.verify(h('y', {}, ['hi']));
   });
 });
