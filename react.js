@@ -1,3 +1,7 @@
-const { createElement } = require('react');
+const { createElement, Fragment } = require('react');
 const hyperchain = require('.');
-module.exports = opts => hyperchain(createElement, opts);
+module.exports = opts => hyperchain(createElement, Object.assign({
+  elementMap: {
+    '_': Fragment,
+  }
+}, opts));
