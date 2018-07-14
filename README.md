@@ -67,6 +67,8 @@ hyperchain(createElement, options)
   * **`tagClass`** `[boolean]` Adds tag-name as an additional class-name (which is also `opts.style` aware)
   * **`filterFalseyChildren`** `[boolean]` Filters out [falsey] children
   * **`flatChildren`** `[boolean]` [Flat]tens children array(s)
+  * **`elementMapMap`** `[object]` Map tagNames or components to something else
+  * **`keyMap`** `[object]` Map keys/attrs to something else
 
 ```js
 h.tagName[...className]`innerText`

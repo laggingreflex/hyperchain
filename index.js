@@ -17,6 +17,20 @@ module.exports = (hh, opts = {}) => {
     return component;
   }
 
+  const applyKeyMap = (props, ...rest) => {
+    if (!props || !opts.keyMap) return;
+    for (const key in opts.keyMap) {
+      const map = opts.keyMap[key];
+      if (typeof map === 'string') {
+        props[opts.keyMap[key]] = props[key];
+        delete props[key];
+      } else if (typeof map === 'function') {
+        map(props, ...rest);
+      }
+    }
+    return props;
+  }
+
   return new Proxy(hh, {
     apply: (hh, that, args) => {
       let [component, ...rest] = args;
@@ -32,6 +46,7 @@ module.exports = (hh, opts = {}) => {
       if (opts.filterFalseyChildren && children && children.length) {
         children = children.filter(Boolean);
       }
+      applyKeyMap(props, component, ...children);
       return hh(component, props, ...children);
     },
     get: (t, component) => {
@@ -76,6 +91,7 @@ module.exports = (hh, opts = {}) => {
           if (children.length) throw new Error(`This shouldn't have happened`);
           ret = hh(component) || {};
         } else {
+          applyKeyMap(props, component, ...children);
           ret = hh(component, props, ...children) || {};
         }
         // let ret = hh(component, props, ...children) || {};

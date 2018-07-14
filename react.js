@@ -3,5 +3,8 @@ const hyperchain = require('.');
 module.exports = opts => hyperchain(createElement, Object.assign({
   elementMap: {
     '_': Fragment,
-  }
+  },
+  keyMap: {
+    class: 'className',
+  },
 }, opts));
