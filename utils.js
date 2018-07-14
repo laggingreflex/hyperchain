@@ -2,7 +2,10 @@ const ority = require('ority');
 const deepmerge = require('deepmerge');
 const _ = exports;
 
+_.symbol = Symbol('symbol');
+
 _.arrify = _ => _ ? Array.isArray(_) ? _ : [_] : [];
+_.flat = a => a.reduce((f, v) => Array.isArray(v) ? f.concat(_.flat(v)) : f.concat(v), []);
 _.ifToClass = _ => _ && { class: _ } || {};
 _.arrifyClass = _ => {
   if (!_) return [];
@@ -12,28 +15,76 @@ _.arrifyClass = _ => {
   throw new Error(`Invalid class: ${typeof _} ${JSON.stringify(_)}`);
 };
 
+const childTypes = 'string|number|function|boolean'.split('|');
 _.getPropsAndChildren = args => {
-  if (!Array.isArray(args)) {
-    throw new Error(`Need an array of args, got: ${args} (${typeof args})`);
-  }
-  if (_.isTTL(args)) {
-    return { props: {}, children: _.parseTTL(...args) };
+
+  const isChild = it => childTypes.includes(typeof it) || Array.isArray(it);
+
+  let props;
+  let children = [];
+
+  // console.log(`args:`, args);
+
+  if (!args || !args.length) {
+    //
+  } else if (args.length === 1) {
+    if (isChild(args[0])) {
+      props = null;
+      if (Array.isArray(args[0])) {
+        children = args[0];
+      } else {
+        children = args;
+      }
+    } else {
+      props = args[0];
+    }
   } else {
-    let { props, children } = ority(args, [{
-      props: 'object',
-      children: ['string', 'number', 'function'],
-    }, {
-      children: ['string', 'number', 'function'],
-      props: 'object',
-    }, {
-      props: 'object',
-    }, {
-      children: ['string', 'number', 'function'],
-    }, {}]);
-    props = props || {};
-    children = _.arrify(children || []);
-    return { props, children };
+    if (isChild(args[0])) {
+      props = null;
+      children = args;
+    } else {
+      props = args[0] || null;
+      children = args.slice(1);
+    }
   }
+
+  // console.log({ props, children });
+
+  // if (isChild(args[0])) {
+  //   props = null;
+  //   children = args;
+  // } else if (args.length > 1) {
+  //   props = args[0] || null;
+  //   children = args.slice(1);
+  // } else {
+  //   props = args[0] || null;
+  //   children = args.slice(1);
+  // }
+
+  return { props, children };
+
+  // if (typeof args[0])
+  //   if (!Array.isArray(args)) {
+  //     throw new Error(`Need an array of args, got: ${args} (${typeof args})`);
+  //   }
+  // if (_.isTTL(args)) {
+  //   return { props: {}, children: _.parseTTL(...args) };
+  // } else {
+  //   let { props, children } = ority(args, [{
+  //     props: 'object',
+  //     children: ['string', 'number', 'function'],
+  //   }, {
+  //     children: ['string', 'number', 'function'],
+  //     props: 'object',
+  //   }, {
+  //     props: 'object',
+  //   }, {
+  //     children: ['string', 'number', 'function'],
+  //   }, {}]);
+  //   props = props || {};
+  //   children = _.arrify(children || []);
+  //   return { props, children };
+  // }
 }
 
 _.getAttribValue = args => {

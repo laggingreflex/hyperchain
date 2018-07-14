@@ -1,89 +1,113 @@
 const dashify = require('dashify');
 const _ = require('./utils');
 
-const symbol = Symbol('symbol');
-
 module.exports = (hh, opts = {}) => {
   if (typeof hh !== 'function') {
     throw new Error(`Need a reviver function (h/createElement). Provide one or use a helper (/react/preact/text)`);
   }
   const mergeDeep = Boolean(opts.mergeDeep !== false);
+
+  const elementMap = old => {
+    if (!opts.elementMap || !(old in opts.elementMap)) return old;
+    const component = opts.elementMap[old];
+    if (!component) { throw new Error(`Invalid elementMap: {${old}: ${component}}`) }
+    return component;
+  }
+
   return new Proxy(hh, {
     apply: (hh, that, args) => {
       let [component, ...rest] = args;
-      if (opts.elementMap && component in opts.elementMap) {
-        component = opts.elementMap[component];
-      }
-      if (!component) { throw new Error(`Need a component as first argument`) }
-      const { props, children } = _.getPropsAndChildren(rest);
-      if (Array.isArray(props.class)) {
+      component = elementMap(component);
+      if (!component) { throw new Error(`Need a component as first argument, received {${component}}`) }
+      let { props, children } = _.getPropsAndChildren(rest);
+      if (props && Array.isArray(props.class)) {
         props.class = props.class.join(' ')
       }
-      if (children && children.length) {
-        if (children.length === 1 && typeof children[0] === 'function') {
-          return hh(component, props, children[0]);
-        } else {
-          return hh(component, props, children);
-        }
-      } else {
-        return hh(component, props);
+      if (opts.filterFalseyChildren && children && children.length) {
+        children = children.filter(Boolean);
       }
+      return hh(component, props, ...children);
     },
     get: (t, component) => {
-      if (opts.elementMap && component in opts.elementMap) {
-        component = opts.elementMap[component];
-      }
+      component = elementMap(component);
       const h = (...args) => {
-        const { props, children } = _.getPropsAndChildren(args);
-        if (!props.class) {
-          props.class = [];
+        // console.log(`args:`, args);
+        let { props, children } = _.getPropsAndChildren(args);
+        if (opts.filterFalseyChildren && children && children.length) {
+          children = children.filter(Boolean);
         }
-        if (!Array.isArray(props.class)) {
-          props.class = props.class.split(' ');
+        // if (!props.class) {
+        //   props.class = [];
+        // }
+        if (opts.tagClass) {
+          if (!props) props = {};
+          if (!props.class) props.class = [];
         }
-        if (opts.tagClass && typeof component === 'string') {
-          props.class.push(component);
+        if (props && props.class) {
+          if (!Array.isArray(props.class)) {
+            props.class = props.class.split(' ');
+          }
+          if (opts.tagClass && typeof component === 'string') {
+            props.class.push(component);
+          }
+          if (opts.style) {
+            const additionalClasses = Object.keys(opts.style).filter(_ => props.class.some(__ => _ === __));
+            props.class.push(...(additionalClasses.map(_ => opts.style[_])));
+          }
+          if (Array.isArray(props.class)) {
+            props.class = props.class.join(' ').trim();
+          }
+          if (!props.class) {
+            delete props.class;
+          }
         }
-        if (opts.style) {
-          const additionalClasses = Object.keys(opts.style).filter(_ => props.class.some(__ => _ === __));
-          props.class.push(...(additionalClasses.map(_ => opts.style[_])));
-        }
-        if (Array.isArray(props.class)) {
-          props.class = props.class.join(' ')
-        }
-        if (!props.class) {
-          delete props.class;
-        }
+        // console.log({ props, children });
         let ret;
-        if (children && children.length) {
-          ret = hh(component, props, children) || {};
+        if (props === undefined) {
+          if (children.length) throw new Error(`This shouldn't have happened`);
+          ret = hh(component) || {};
         } else {
-          ret = hh(component, props) || {};
+          ret = hh(component, props, ...children) || {};
         }
-        ret[symbol] = true;
+        // let ret = hh(component, props, ...children) || {};
+        // if (children && children.length) {
+        //   ret = hh(component, props, children) || {};
+        // } else {
+        //   ret = hh(component, props) || {};
+        // }
+        ret[_.symbol] = true;
         return ret;
       }
       return re();
 
       function re(prev = [], prevProp) {
+        // console.log({ prev, prevProp });
         if (typeof prevProp !== 'string') {
-          prevProp = null;
+          // console.log(prevProp, '->null');
+          // prevProp = null;
         }
 
         const getRetFn = prop => (...args) => {
-          args = args.filter(Boolean);
+          // console.log(`args:`, args);
+          // args = args.filter(Boolean);
           if (!args.length) {
-            const props = _.mergeProps({}, _.ifToClass(prevProp), ...prev, mergeDeep);
-            return h(props, []);
+            // console.log(1);
+            const props = prevProp ? _.mergeProps({}, _.ifToClass(prevProp), ...prev, mergeDeep) : prevProp;
+            return h(props);
+            // return h(props, []);
           } else if (_.isTTL(args)) {
+            // console.log(2);
             const children = _.parseTTL(args);
-            const props = _.mergeProps({}, _.ifToClass(prevProp), ...prev, mergeDeep);
-            return h(props, children);
+            const props = prevProp ? _.mergeProps({}, _.ifToClass(prevProp), ...prev, mergeDeep) : prevProp;
+            // console.log({ props, children });
+            return h(props, ...children);
+            // return h(props, children);
           } else if (prop && args.length === 1 && (
               typeof args[0] === 'function'
               || prop === 'style'
               // || (typeof args[0] === 'string' && prevProp === 'attr')
             )) {
+            // console.log(3);
             // an attribute
             const arg = args[0];
             return re([{
@@ -91,17 +115,23 @@ module.exports = (hh, opts = {}) => {
             }, ...prev])
           } else if (
             // all arguments are nodes/strings
-            args.some(arg => (arg !== undefined && arg !== null) && (typeof arg === 'string' || arg[symbol] || arg['nodeName']))
-            && !args.some(arg => !((arg !== undefined && arg !== null) && (typeof arg === 'string' || arg[symbol] || arg['nodeName'])))
+            args.some(arg => (arg !== undefined && arg !== null) && (typeof arg === 'string' || arg[_.symbol] || arg['nodeName']))
+            && !args.some(arg => !((arg !== undefined && arg !== null) && (typeof arg === 'string' || arg[_.symbol] || arg['nodeName'])))
           ) {
-            const props = _.mergeProps({}, _.ifToClass(prevProp), ...prev, mergeDeep);
+            // console.log(4);
+            const props = prevProp ? _.mergeProps({}, _.ifToClass(prevProp), ...prev, mergeDeep) : prevProp;
             const children = args;
-            return h(props, children);
+            return h(props, ...children);
+            // return h(props, children);
           } else {
+            // console.log(5);
             // default: [props, children] or [props] or [children]
             let { props, children } = _.getPropsAndChildren(args);
-            props = _.mergeProps({}, _.ifToClass(prevProp), ...prev, props, mergeDeep);
-            return h(props, children);
+            if (props) {
+              props = _.mergeProps({}, _.ifToClass(prevProp), ...prev, props, mergeDeep);
+            }
+            return h(props, ...children);
+            // return h(props, children);
           }
         };
 
