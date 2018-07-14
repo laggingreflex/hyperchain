@@ -65,6 +65,7 @@ hyperchain(createElement, options)
   * **`style`** `[object]` Uses [CSS Modules]-compatible styles object to add appropriate classnames. See [hyperstyles]
   * **`dashifyClassnames`** `[boolean]` Turns `.className` to `class-name`
   * **`tagClass`** `[boolean]` Adds tag-name as an additional class-name (which is also `opts.style` aware)
+  * **`filterFalseyChildren`** `[boolean]` Filters out [falsey] children
 
 ```js
 h.tagName[...className]`innerText`
@@ -123,7 +124,10 @@ boldText `bold text`
 * **[dashify]** to dashify classNames
 * **[deepmerge]** to merge props
 * **[ority]** to infer arguments better
+* **[proxy-assign]** to merge options with defaults
 
 [dashify]: https://github.com/jonschlinkert/dashify
 [deepmerge]: https://github.com/KyleAMathews/deepmerge
 [ority]: https://github.com/laggingreflex/ority
+[proxy-assign]: https://github.com/laggingreflex/proxy-assign
+[falsey]: https://developer.mozilla.org/en-US/docs/Glossary/Falsy
