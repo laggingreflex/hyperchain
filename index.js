@@ -1,7 +1,10 @@
 const dashify = require('dashify');
+const proxyAssign = require('proxy-assign');
 const _ = require('./utils');
+const defaultOpts = require('./opts')
 
 module.exports = (hh, opts = {}) => {
+  opts = proxyAssign(opts, defaultOpts);
   if (typeof hh !== 'function') {
     throw new Error(`Need a reviver function (h/createElement). Provide one or use a helper (/react/preact/text)`);
   }

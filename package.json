@@ -10,7 +10,8 @@
   "dependencies": {
     "dashify": "^0.2.2",
     "deepmerge": "^1.5.1",
-    "ority": "^0.5.0"
+    "ority": "^0.5.0",
+    "proxy-assign": "^0.2.0"
   },
   "peerDependencies": {
     "preact": "*",
