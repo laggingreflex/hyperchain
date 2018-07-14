@@ -66,6 +66,7 @@ hyperchain(createElement, options)
   * **`dashifyClassnames`** `[boolean]` Turns `.className` to `class-name`
   * **`tagClass`** `[boolean]` Adds tag-name as an additional class-name (which is also `opts.style` aware)
   * **`filterFalseyChildren`** `[boolean]` Filters out [falsey] children
+  * **`flatChildren`** `[boolean]` [Flat]tens children array(s)
 
 ```js
 h.tagName[...className]`innerText`
@@ -131,3 +132,4 @@ boldText `bold text`
 [ority]: https://github.com/laggingreflex/ority
 [proxy-assign]: https://github.com/laggingreflex/proxy-assign
 [falsey]: https://developer.mozilla.org/en-US/docs/Glossary/Falsy
+[flat]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flat

@@ -26,6 +26,9 @@ module.exports = (hh, opts = {}) => {
       if (props && Array.isArray(props.class)) {
         props.class = props.class.join(' ')
       }
+      if (opts.flatChildren && children && children.length) {
+        children = _.flat(children);
+      }
       if (opts.filterFalseyChildren && children && children.length) {
         children = children.filter(Boolean);
       }
@@ -36,6 +39,9 @@ module.exports = (hh, opts = {}) => {
       const h = (...args) => {
         // console.log(`args:`, args);
         let { props, children } = _.getPropsAndChildren(args);
+        if (opts.flatChildren && children && children.length) {
+          children = _.flat(children);
+        }
         if (opts.filterFalseyChildren && children && children.length) {
           children = children.filter(Boolean);
         }
