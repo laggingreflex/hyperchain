@@ -7,104 +7,104 @@ const itDeepEqual = (fn, a, b) => it(`${a.map(_=>JSON.stringify(_))} => ${JSON.s
 itDeepEqual.skip = (fn, a, b) => it.skip(`${a.map(_=>JSON.stringify(_))} => ${JSON.stringify(b)}`, () => assert.deepEqual(fn(...a), b));
 
 describe('basic', () => {
-  it('hc(div, null, hi)', () => {
-    const h = td.function();
-    const hc = hyperchain(h);
-    hc('div', null, 'hi');
-    td.verify(h('div', null, 'hi'));
+  it('h(div, null, hi)', () => {
+    const r = td.function();
+    const h = hyperchain(r);
+    h('div', null, 'hi');
+    td.verify(r('div', null, 'hi'));
   });
-  it('hc(div, null, [hi])', () => {
-    const h = td.function();
-    const hc = hyperchain(h);
-    hc('div', null, ['hi']);
-    td.verify(h('div', null, ['hi']));
+  it('h(div, null, [hi])', () => {
+    const r = td.function();
+    const h = hyperchain(r);
+    h('div', null, ['hi']);
+    td.verify(r('div', null, ['hi']));
   });
-  it('hc(div, {}, hi)', () => {
-    const h = td.function();
-    const hc = hyperchain(h);
-    hc('div', {}, 'hi');
-    td.verify(h('div', {}, 'hi'));
+  it('h(div, {}, hi)', () => {
+    const r = td.function();
+    const h = hyperchain(r);
+    h('div', {}, 'hi');
+    td.verify(r('div', {}, 'hi'));
   });
-  it('hc(div, {}, [hi])', () => {
-    const h = td.function();
-    const hc = hyperchain(h);
-    hc('div', {}, ['hi']);
-    td.verify(h('div', {}, ['hi']));
+  it('h(div, {}, [hi])', () => {
+    const r = td.function();
+    const h = hyperchain(r);
+    h('div', {}, ['hi']);
+    td.verify(r('div', {}, ['hi']));
   });
   describe('opts.filterFalseyChildren', () => {
-    it('hc(div, null, hi, null, hi)', () => {
-      const h = td.function();
-      const hc = hyperchain(h, { filterFalseyChildren: true });
-      hc('div', null, 'hi', null, 'hi');
-      td.verify(h('div', null, 'hi', 'hi'));
+    it('h(div, null, hi, null, hi)', () => {
+      const r = td.function();
+      const h = hyperchain(r, { filterFalseyChildren: true });
+      h('div', null, 'hi', null, 'hi');
+      td.verify(r('div', null, 'hi', 'hi'));
     });
   });
 });
 
 
 describe('tags', () => {
-  it('hc.div(hi)', () => {
-    const h = td.function();
-    const hc = hyperchain(h);
-    hc.div('hi');
-    td.verify(h('div', null, 'hi'));
+  it('h.div(hi)', () => {
+    const r = td.function();
+    const h = hyperchain(r);
+    h.div('hi');
+    td.verify(r('div', null, 'hi'));
   });
-  it('hc.div`hi`', () => {
-    const h = td.function();
-    const hc = hyperchain(h);
-    hc.div `hi`;
-    td.verify(h('div', null, 'hi'));
+  it('h.div`hi`', () => {
+    const r = td.function();
+    const h = hyperchain(r);
+    h.div `hi`;
+    td.verify(r('div', null, 'hi'));
   });
-  it('hc.div({props}, hi)', () => {
-    const h = td.function();
-    const hc = hyperchain(h);
-    hc.div({ props: 'props' }, 'hi');
-    td.verify(h('div', { props: 'props' }, 'hi'));
+  it('h.div({props}, hi)', () => {
+    const r = td.function();
+    const h = hyperchain(r);
+    h.div({ props: 'props' }, 'hi');
+    td.verify(r('div', { props: 'props' }, 'hi'));
   });
-  it('hc.div({props}, hi)', () => {
-    const h = td.function();
-    const hc = hyperchain(h);
-    hc.div({ props: 'props' }, ['hi']);
-    td.verify(h('div', { props: 'props' }, ['hi']));
+  it('h.div({props}, hi)', () => {
+    const r = td.function();
+    const h = hyperchain(r);
+    h.div({ props: 'props' }, ['hi']);
+    td.verify(r('div', { props: 'props' }, ['hi']));
   });
 });
 
 describe('classes', () => {
-  it('hc.div.class`hi`', () => {
-    const h = td.function();
-    const hc = hyperchain(h);
-    hc.div.class `hi`;
-    td.verify(h('div', { class: 'class' }, 'hi'));
+  it('h.div.class`hi`', () => {
+    const r = td.function();
+    const h = hyperchain(r);
+    h.div.class `hi`;
+    td.verify(r('div', { class: 'class' }, 'hi'));
   });
-  it('hc.div.some.class`hi`', () => {
-    const h = td.function();
-    const hc = hyperchain(h);
-    hc.div.some.class `hi`;
-    td.verify(h('div', { class: 'some class' }, 'hi'));
+  it('h.div.some.class`hi`', () => {
+    const r = td.function();
+    const h = hyperchain(r);
+    h.div.some.class `hi`;
+    td.verify(r('div', { class: 'some class' }, 'hi'));
   });
-  it('hc.div({class: {a: true, b: false}})', () => {
-    const h = td.function();
-    const hc = hyperchain(h);
-    hc.div({ class: { a: true, b: false } }, 'hi');
-    td.verify(h('div', { class: 'a' }, 'hi'));
+  it('h.div({class: {a: true, b: false}})', () => {
+    const r = td.function();
+    const h = hyperchain(r);
+    h.div({ class: { a: true, b: false } }, 'hi');
+    td.verify(r('div', { class: 'a' }, 'hi'));
   });
 });
 
 
 describe.skip('attrs', () => {
-  it('hc.div.id(id)`hi`', () => {
-    const h = td.function();
-    const hc = hyperchain(h);
-    hc.div.attr.id('id')
+  it('h.div.id(id)`hi`', () => {
+    const r = td.function();
+    const h = hyperchain(r);
+    h.div.attr.id('id')
     `hi`;
-    td.verify(h('div', { id: 'id' }, ['hi']));
+    td.verify(r('div', { id: 'id' }, ['hi']));
   });
-  it('hc.div.id(id).id(id2)`hi`', () => {
-    const h = td.function();
-    const hc = hyperchain(h);
-    hc.div.id('id').id('id2')
+  it('h.div.id(id).id(id2)`hi`', () => {
+    const r = td.function();
+    const h = hyperchain(r);
+    h.div.id('id').id('id2')
     `hi`;
-    td.verify(h('div', { id: 'id2' }, ['hi']));
+    td.verify(r('div', { id: 'id2' }, ['hi']));
   });
 });
 
@@ -112,167 +112,167 @@ describe.skip('attrs', () => {
 
 describe('separation', () => {
   it('...', () => {
-    const h = td.function();
-    const hc = hyperchain(h);
-    const { div } = hc;
+    const r = td.function();
+    const h = hyperchain(r);
+    const { div } = h;
     div.class `hi`;
     div.class2 `hi`;
-    td.verify(h('div', { class: 'class' }, 'hi'));
-    td.verify(h('div', { class: 'class2' }, 'hi'));
+    td.verify(r('div', { class: 'class' }, 'hi'));
+    td.verify(r('div', { class: 'class2' }, 'hi'));
   });
 });
 
 
 describe('nesting', () => {
   it('classes', () => {
-    const h = td.function();
-    const hc = hyperchain(h);
-    const { div } = hc;
+    const r = td.function();
+    const h = hyperchain(r);
+    const { div } = h;
     const base = div.base
     const a = base.a
     const b = base.b
     a `a`
     b `b`
-    td.verify(h('div', { class: 'base a' }, 'a'));
-    td.verify(h('div', { class: 'base b' }, 'b'));
+    td.verify(r('div', { class: 'base a' }, 'a'));
+    td.verify(r('div', { class: 'base b' }, 'b'));
   });
 });
 
 describe.skip('opts.mergeDeep', () => {
   it('should', () => {
-    const h = td.function();
-    const hc = hyperchain(h);
-    hc.div({ style: { a: 1 } })({ style: { b: 2 } })
+    const r = td.function();
+    const h = hyperchain(r);
+    h.div({ style: { a: 1 } })({ style: { b: 2 } })
     `hi`;
-    td.verify(h('div', { style: { a: 1, b: 2 } }, 'hi'));
+    td.verify(r('div', { style: { a: 1, b: 2 } }, 'hi'));
   });
   it('shouldnt', () => {
-    const h = td.function();
-    const hc = hyperchain(h, { mergeDeep: false });
-    hc.div.style({ a: 1 }).style({ b: 2 })
+    const r = td.function();
+    const h = hyperchain(r, { mergeDeep: false });
+    h.div.style({ a: 1 }).style({ b: 2 })
     `hi`;
-    td.verify(h('div', { style: { b: 2 } }, 'hi'));
+    td.verify(r('div', { style: { b: 2 } }, 'hi'));
   });
 });
 
 
 describe('opts.tagClass', () => {
   it('should', () => {
-    const h = td.function();
-    const hc = hyperchain(h, { tagClass: true });
-    hc.div `hi`;
-    td.verify(h('div', { class: 'div' }, 'hi'));
+    const r = td.function();
+    const h = hyperchain(r, { tagClass: true });
+    h.div `hi`;
+    td.verify(r('div', { class: 'div' }, 'hi'));
   });
   it('should with style', () => {
-    const h = td.function();
-    const hc = hyperchain(h, { style: { div: 'hash' }, tagClass: true });
-    hc.div `hi`;
-    td.verify(h('div', { class: 'div hash' }, 'hi'));
+    const r = td.function();
+    const h = hyperchain(r, { style: { div: 'hash' }, tagClass: true });
+    h.div `hi`;
+    td.verify(r('div', { class: 'div hash' }, 'hi'));
   });
   it('shouldnt', () => {
-    const h = td.function();
-    const hc = hyperchain(h, { tagClass: false });
-    hc.div `hi`;
-    td.verify(h('div', null, 'hi'));
+    const r = td.function();
+    const h = hyperchain(r, { tagClass: false });
+    h.div `hi`;
+    td.verify(r('div', null, 'hi'));
   });
 });
 
 describe('opts.dashifyClassnames', () => {
   it('should', () => {
-    const h = td.function();
-    const hc = hyperchain(h, { dashifyClassnames: true });
-    hc.div.className `hi`;
-    td.verify(h('div', { class: 'class-name' }, 'hi'));
+    const r = td.function();
+    const h = hyperchain(r, { dashifyClassnames: true });
+    h.div.className `hi`;
+    td.verify(r('div', { class: 'class-name' }, 'hi'));
   });
   it('shouldnt', () => {
-    const h = td.function();
-    const hc = hyperchain(h, { dashifyClassnames: false });
-    hc.div.className `hi`;
-    td.verify(h('div', { class: 'className' }, 'hi'));
+    const r = td.function();
+    const h = hyperchain(r, { dashifyClassnames: false });
+    h.div.className `hi`;
+    td.verify(r('div', { class: 'className' }, 'hi'));
   });
 });
 
 describe('opts.filterFalseyChildren', () => {
   it('should', () => {
-    const h = td.function();
-    const hc = hyperchain(h, { filterFalseyChildren: true });
-    hc.div('hi', false, 'hi');
-    td.verify(h('div', null, 'hi', 'hi'));
+    const r = td.function();
+    const h = hyperchain(r, { filterFalseyChildren: true });
+    h.div('hi', false, 'hi');
+    td.verify(r('div', null, 'hi', 'hi'));
   });
   it('shouldnt', () => {
-    const h = td.function();
-    const hc = hyperchain(h, { filterFalseyChildren: false });
-    hc.div('hi', false, 'hi');
-    td.verify(h('div', null, 'hi', false, 'hi'));
+    const r = td.function();
+    const h = hyperchain(r, { filterFalseyChildren: false });
+    h.div('hi', false, 'hi');
+    td.verify(r('div', null, 'hi', false, 'hi'));
   });
 });
 
 describe('opts.flatChildren', () => {
   it('should', () => {
-    const h = td.function();
-    const hc = hyperchain(h, { flatChildren: true });
-    hc.div([
+    const r = td.function();
+    const h = hyperchain(r, { flatChildren: true });
+    h.div([
       ['hi']
     ]);
-    td.verify(h('div', null, 'hi'));
+    td.verify(r('div', null, 'hi'));
   });
   it('shouldnt', () => {
-    const h = td.function();
-    const hc = hyperchain(h, { flatChildren: false });
-    hc.div([
+    const r = td.function();
+    const h = hyperchain(r, { flatChildren: false });
+    h.div([
       ['hi']
     ]);
-    td.verify(h('div', null, ['hi']));
+    td.verify(r('div', null, ['hi']));
   });
   it('should', () => {
-    const h = td.function();
-    const hc = hyperchain(h, { flatChildren: true });
-    hc.div.a([
+    const r = td.function();
+    const h = hyperchain(r, { flatChildren: true });
+    h.div.a([
       ['hi']
     ]);
-    td.verify(h('div', null, 'hi'));
+    td.verify(r('div', null, 'hi'));
   });
   it('shouldnt', () => {
-    const h = td.function();
-    const hc = hyperchain(h, { flatChildren: false });
-    hc.div.a([
+    const r = td.function();
+    const h = hyperchain(r, { flatChildren: false });
+    h.div.a([
       ['hi']
     ]);
-    td.verify(h('div', null, ['hi']));
+    td.verify(r('div', null, ['hi']));
   });
 });
 
 describe('opts.elementMap', () => {
   it('should', () => {
-    const h = td.function();
-    const hc = hyperchain(h, { elementMap: { 'div': 'p' } });
-    hc.div();
-    td.verify(h('p'));
+    const r = td.function();
+    const h = hyperchain(r, { elementMap: { 'div': 'p' } });
+    h.div();
+    td.verify(r('p'));
   });
   it('shouldnt', () => {
-    const h = td.function();
-    const hc = hyperchain(h, { elementMap: false });
-    hc.div();
-    td.verify(h('div'));
+    const r = td.function();
+    const h = hyperchain(r, { elementMap: false });
+    h.div();
+    td.verify(r('div'));
   });
 });
 
 describe('opts.keyMap', () => {
   it('should', () => {
-    const h = td.function();
-    const hc = hyperchain(h, { keyMap: { class: 'className' } });
-    hc.div.div();
-    td.verify(h('div', { className: 'div' }));
+    const r = td.function();
+    const h = hyperchain(r, { keyMap: { class: 'className' } });
+    h.div.div();
+    td.verify(r('div', { className: 'div' }));
   });
   it('shouldnt', () => {
-    const h = td.function();
-    const hc = hyperchain(h, { keyMap: false });
-    hc.div.div();
-    td.verify(h('div', { class: 'div' }));
+    const r = td.function();
+    const h = hyperchain(r, { keyMap: false });
+    h.div.div();
+    td.verify(r('div', { class: 'div' }));
   });
   it('should', () => {
-    const h = td.function();
-    const hc = hyperchain(h, {
+    const r = td.function();
+    const h = hyperchain(r, {
       keyMap: {
         class: (props, c) => {
           if (c !== 'Fragment') {
@@ -282,77 +282,77 @@ describe('opts.keyMap', () => {
         }
       }
     });
-    hc.div.div();
-    td.verify(h('div', { className: 'div' }));
-    hc.Fragment.div();
-    td.verify(h('Fragment', {}));
-    // td.verify(h('Fragment'));
+    h.div.div();
+    td.verify(r('div', { className: 'div' }));
+    h.Fragment.div();
+    td.verify(r('Fragment', {}));
+    // td.verify(r('Fragment'));
   });
 });
 
 describe('children', () => {
-  it('hc.div(a, b)', () => {
-    const h = td.function();
-    const hc = hyperchain(h);
-    hc.div('a', 'b');
-    td.verify(h('div', null, 'a', 'b'));
+  it('h.div(a, b)', () => {
+    const r = td.function();
+    const h = hyperchain(r);
+    h.div('a', 'b');
+    td.verify(r('div', null, 'a', 'b'));
   });
-  it('hc.div(hc.div(a), hc.div(b))', () => {
-    const t1 = td.function();
-    const t2 = td.function();
-    const t3 = td.function();
-    const h1 = hyperchain(t1);
-    const h2 = hyperchain(t2);
-    const h3 = hyperchain(t3);
-    td.when(t2('div', null, '2')).thenReturn('2');
-    td.when(t3('div', null, '3')).thenReturn('3');
+  it('h.div(h.div(a), h.div(b))', () => {
+    const r1 = td.function();
+    const r2 = td.function();
+    const r3 = td.function();
+    const h1 = hyperchain(r1);
+    const h2 = hyperchain(r2);
+    const h3 = hyperchain(r3);
+    td.when(r2('div', null, '2')).thenReturn('2');
+    td.when(r3('div', null, '3')).thenReturn('3');
 
     h1.div(h2.div `2`, h3.div `3`);
 
-    td.verify(t1('div', null, '2', '3'));
+    td.verify(r1('div', null, '2', '3'));
   });
-  it('hc.div(hc.div(a), hc.div(b))', () => {
-    const t1 = td.function();
-    const t2 = td.function();
-    const h1 = hyperchain(t1);
-    const h2 = hyperchain(t2);
-    td.when(t2('div', null, '2')).thenReturn('2');
+  it('h.div(h.div(a), h.div(b))', () => {
+    const r1 = td.function();
+    const r2 = td.function();
+    const h1 = hyperchain(r1);
+    const h2 = hyperchain(r2);
+    td.when(r2('div', null, '2')).thenReturn('2');
 
     h1.div(h2.div `2`, 3);
 
-    td.verify(t1('div', null, '2', 3));
+    td.verify(r1('div', null, '2', 3));
   });
-  it('hc.div(hc.div(a), hc.div(b))', () => {
-    const t1 = td.function();
-    const t3 = td.function();
-    const h1 = hyperchain(t1);
-    const h3 = hyperchain(t3);
-    td.when(t3('div', null, '3')).thenReturn('3');
+  it('h.div(h.div(a), h.div(b))', () => {
+    const r1 = td.function();
+    const r3 = td.function();
+    const h1 = hyperchain(r1);
+    const h3 = hyperchain(r3);
+    td.when(r3('div', null, '3')).thenReturn('3');
 
     h1.div(2, h3.div `3`);
 
-    td.verify(t1('div', null, 2, '3'));
+    td.verify(r1('div', null, 2, '3'));
   });
-  it('hc.div(hc.div(a))', () => {
-    const t1 = td.function();
-    const t2 = td.function();
-    const h1 = hyperchain(t1);
-    const h2 = hyperchain(t2);
-    td.when(t2('div', null, '2')).thenReturn('2');
+  it('h.div(h.div(a))', () => {
+    const r1 = td.function();
+    const r2 = td.function();
+    const h1 = hyperchain(r1);
+    const h2 = hyperchain(r2);
+    td.when(r2('div', null, '2')).thenReturn('2');
 
     h1.div(h2.div `2`);
 
-    td.verify(t1('div', null, '2'));
+    td.verify(r1('div', null, '2'));
   });
-  it('hc.div.class(hc.div(a))', () => {
-    const t1 = td.function();
-    const t2 = td.function();
-    const h1 = hyperchain(t1);
-    const h2 = hyperchain(t2);
-    const t2r = { t: 2 };
-    td.when(t2('div', { class: 'class2' }, '2')).thenReturn(t2r);
+  it('h.div.class(h.div(a))', () => {
+    const r1 = td.function();
+    const r2 = td.function();
+    const h1 = hyperchain(r1);
+    const h2 = hyperchain(r2);
+    const r2r = { t: 2 };
+    td.when(r2('div', { class: 'class2' }, '2')).thenReturn(r2r);
     h1.div.class1(h2.div.class2 `2`);
-    td.verify(t1('div', { class: 'class1' }, t2r));
+    td.verify(r1('div', { class: 'class1' }, r2r));
   });
 });
 
@@ -367,10 +367,10 @@ describe('children', () => {
 
 describe('opts.style', () => {
   it('h({style: {a: aa}}).div', () => {
-    const h = td.function();
-    const hc = hyperchain(h, { style: { a: 'aa' } });
-    hc.div.a `hi`;
-    td.verify(h('div', { class: 'a aa' }, 'hi'));
+    const r = td.function();
+    const h = hyperchain(r, { style: { a: 'aa' } });
+    h.div.a `hi`;
+    td.verify(r('div', { class: 'a aa' }, 'hi'));
   });
 });
 
@@ -379,12 +379,12 @@ describe('opts.style', () => {
 
 
 describe('full', () => {
-  it.skip('hc.div.class.id(id)`hi`', () => {
-    const h = td.function();
-    const hc = hyperchain(h);
-    hc.div.class.id('id')
+  it.skip('h.div.class.id(id)`hi`', () => {
+    const r = td.function();
+    const h = hyperchain(r);
+    h.div.class.id('id')
     `hi`;
-    td.verify(h('div', { class: 'class', id: 'id' }, ['hi']));
+    td.verify(r('div', { class: 'class', id: 'id' }, ['hi']));
   });
 });
 
@@ -499,23 +499,23 @@ describe('utils', () => {
 
 
 describe('edge cases', () => {
-  it('hc.div()', () => {
-    const h = td.function();
-    const hc = hyperchain(h);
-    hc.div();
-    td.verify(h('div'));
+  it('h.div()', () => {
+    const r = td.function();
+    const h = hyperchain(r);
+    h.div();
+    td.verify(r('div'));
   });
-  it('hc.div(undefined)', () => {
-    const h = td.function();
-    const hc = hyperchain(h);
-    hc.div();
-    td.verify(h('div'));
+  it('h.div(undefined)', () => {
+    const r = td.function();
+    const h = hyperchain(r);
+    h.div();
+    td.verify(r('div'));
   });
-  it('hc.div(hi, undefined, hi)', () => {
-    const h = td.function();
-    const hc = hyperchain(h);
-    hc.div('hi', undefined, 'hi');
-    td.verify(h('div', null, 'hi', undefined, 'hi'));
+  it('h.div(hi, undefined, hi)', () => {
+    const r = td.function();
+    const h = hyperchain(r);
+    h.div('hi', undefined, 'hi');
+    td.verify(r('div', null, 'hi', undefined, 'hi'));
   });
 });
 
@@ -558,40 +558,40 @@ describe('text', () => {
 
 
 describe('Context API', () => {
-  it('hc(Consumer, {}, () => {})', () => {
-    const h = td.function();
-    const hc = hyperchain(h);
+  it('h(Consumer, {}, () => {})', () => {
+    const r = td.function();
+    const h = hyperchain(r);
     const fn = () => {};
-    hc('Consumer', {}, fn);
-    td.verify(h('Consumer', {}, fn));
+    h('Consumer', {}, fn);
+    td.verify(r('Consumer', {}, fn));
   });
 });
 
 
 
 describe('elementMap', () => {
-  it('hc.x->y({}, hi)', () => {
-    const h = td.function();
-    const hc = hyperchain(h, { elementMap: { x: 'y' } });
-    hc.x('hi');
-    td.verify(h('y', null, 'hi'));
+  it('h.x->y({}, hi)', () => {
+    const r = td.function();
+    const h = hyperchain(r, { elementMap: { x: 'y' } });
+    h.x('hi');
+    td.verify(r('y', null, 'hi'));
   });
-  it('hc.x->y.x({}, hi)', () => {
-    const h = td.function();
-    const hc = hyperchain(h, { elementMap: { x: 'y' } });
-    hc.x.x('hi');
-    td.verify(h('y', { class: 'x' }, 'hi'));
+  it('h.x->y.x({}, hi)', () => {
+    const r = td.function();
+    const h = hyperchain(r, { elementMap: { x: 'y' } });
+    h.x.x('hi');
+    td.verify(r('y', { class: 'x' }, 'hi'));
   });
-  it('hc.y.x({}, hi)', () => {
-    const h = td.function();
-    const hc = hyperchain(h, { elementMap: { x: 'y' } });
-    hc.y.x('hi');
-    td.verify(h('y', { class: 'x' }, 'hi'));
+  it('h.y.x({}, hi)', () => {
+    const r = td.function();
+    const h = hyperchain(r, { elementMap: { x: 'y' } });
+    h.y.x('hi');
+    td.verify(r('y', { class: 'x' }, 'hi'));
   });
-  it('hc(x->y, {}, hi)', () => {
-    const h = td.function();
-    const hc = hyperchain(h, { elementMap: { x: 'y' } });
-    hc('x', {}, 'hi');
-    td.verify(h('y', {}, 'hi'));
+  it('h(x->y, {}, hi)', () => {
+    const r = td.function();
+    const h = hyperchain(r, { elementMap: { x: 'y' } });
+    h('x', {}, 'hi');
+    td.verify(r('y', {}, 'hi'));
   });
 });
