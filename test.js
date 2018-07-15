@@ -156,7 +156,7 @@ describe.skip('opts.mergeDeep', () => {
 });
 
 
-describe('opts.opts.tagClass', () => {
+describe('opts.tagClass', () => {
   it('should', () => {
     const h = td.function();
     const hc = hyperchain(h, { tagClass: true });
@@ -177,6 +177,118 @@ describe('opts.opts.tagClass', () => {
   });
 });
 
+describe('opts.dashifyClassnames', () => {
+  it('should', () => {
+    const h = td.function();
+    const hc = hyperchain(h, { dashifyClassnames: true });
+    hc.div.className `hi`;
+    td.verify(h('div', { class: 'class-name' }, 'hi'));
+  });
+  it('shouldnt', () => {
+    const h = td.function();
+    const hc = hyperchain(h, { dashifyClassnames: false });
+    hc.div.className `hi`;
+    td.verify(h('div', { class: 'className' }, 'hi'));
+  });
+});
+
+describe('opts.filterFalseyChildren', () => {
+  it('should', () => {
+    const h = td.function();
+    const hc = hyperchain(h, { filterFalseyChildren: true });
+    hc.div('hi', false, 'hi');
+    td.verify(h('div', null, 'hi', 'hi'));
+  });
+  it('shouldnt', () => {
+    const h = td.function();
+    const hc = hyperchain(h, { filterFalseyChildren: false });
+    hc.div('hi', false, 'hi');
+    td.verify(h('div', null, 'hi', false, 'hi'));
+  });
+});
+
+describe('opts.flatChildren', () => {
+  it('should', () => {
+    const h = td.function();
+    const hc = hyperchain(h, { flatChildren: true });
+    hc.div([
+      ['hi']
+    ]);
+    td.verify(h('div', null, 'hi'));
+  });
+  it('shouldnt', () => {
+    const h = td.function();
+    const hc = hyperchain(h, { flatChildren: false });
+    hc.div([
+      ['hi']
+    ]);
+    td.verify(h('div', null, ['hi']));
+  });
+  it('should', () => {
+    const h = td.function();
+    const hc = hyperchain(h, { flatChildren: true });
+    hc.div.a([
+      ['hi']
+    ]);
+    td.verify(h('div', null, 'hi'));
+  });
+  it('shouldnt', () => {
+    const h = td.function();
+    const hc = hyperchain(h, { flatChildren: false });
+    hc.div.a([
+      ['hi']
+    ]);
+    td.verify(h('div', null, ['hi']));
+  });
+});
+
+describe('opts.elementMap', () => {
+  it('should', () => {
+    const h = td.function();
+    const hc = hyperchain(h, { elementMap: { 'div': 'p' } });
+    hc.div();
+    td.verify(h('p'));
+  });
+  it('shouldnt', () => {
+    const h = td.function();
+    const hc = hyperchain(h, { elementMap: false });
+    hc.div();
+    td.verify(h('div'));
+  });
+});
+
+describe('opts.keyMap', () => {
+  it('should', () => {
+    const h = td.function();
+    const hc = hyperchain(h, { keyMap: { class: 'className' } });
+    hc.div.div();
+    td.verify(h('div', { className: 'div' }));
+  });
+  it('shouldnt', () => {
+    const h = td.function();
+    const hc = hyperchain(h, { keyMap: false });
+    hc.div.div();
+    td.verify(h('div', { class: 'div' }));
+  });
+  it('should', () => {
+    const h = td.function();
+    const hc = hyperchain(h, {
+      keyMap: {
+        class: (props, c) => {
+          if (c !== 'Fragment') {
+            props.className = props.class
+          }
+          delete props.class;
+        }
+      }
+    });
+    hc.div.div();
+    td.verify(h('div', { className: 'div' }));
+    hc.Fragment.div();
+    td.verify(h('Fragment', {}));
+    // td.verify(h('Fragment'));
+  });
+});
 
 describe('children', () => {
   it('hc.div(a, b)', () => {
@@ -198,6 +310,28 @@ describe('children', () => {
     h1.div(h2.div `2`, h3.div `3`);
 
     td.verify(t1('div', null, '2', '3'));
+  });
+  it('hc.div(hc.div(a), hc.div(b))', () => {
+    const t1 = td.function();
+    const t2 = td.function();
+    const h1 = hyperchain(t1);
+    const h2 = hyperchain(t2);
+    td.when(t2('div', null, '2')).thenReturn('2');
+
+    h1.div(h2.div `2`, 3);
+
+    td.verify(t1('div', null, '2', 3));
+  });
+  it('hc.div(hc.div(a), hc.div(b))', () => {
+    const t1 = td.function();
+    const t3 = td.function();
+    const h1 = hyperchain(t1);
+    const h3 = hyperchain(t3);
+    td.when(t3('div', null, '3')).thenReturn('3');
+
+    h1.div(2, h3.div `3`);
+
+    td.verify(t1('div', null, 2, '3'));
   });
   it('hc.div(hc.div(a))', () => {
     const t1 = td.function();
@@ -415,7 +549,7 @@ describe('text', () => {
   });
   it('h.div({a:1}, [h.div.a(), h.div.b()])', () => {
     assert.equal(
-      h.div({a: 1}, [h.div.a(), h.div.b()]),
+      h.div({ a: 1 }, [h.div.a(), h.div.b()]),
       `<div a=1><div class="a"></div><div class="b"></div></div>`
     )
   });
