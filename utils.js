@@ -16,9 +16,10 @@ _.arrifyClass = _ => {
 };
 
 const childTypes = 'string|number|function|boolean'.split('|');
+
 _.getPropsAndChildren = args => {
 
-  const isChild = it => childTypes.includes(typeof it) || Array.isArray(it);
+  const isChild = it => childTypes.includes(typeof it) || Array.isArray(it) || (it && it[_.symbol]);
 
   let props;
   let children = [];
@@ -37,6 +38,9 @@ _.getPropsAndChildren = args => {
       }
     } else {
       props = args[0];
+      // if (props && props.children) {
+      //   children = props.children;
+      // }
     }
   } else {
     if (isChild(args[0])) {

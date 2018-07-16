@@ -3,21 +3,124 @@ const proxyAssign = require('proxy-assign');
 const _ = require('./utils');
 const defaultOpts = require('./opts')
 
-module.exports = (hh, opts = {}) => {
+module.exports = (reviver, opts = {}) => {
   opts = proxyAssign(opts, defaultOpts);
-  if (typeof hh !== 'function') {
+  if (typeof reviver !== 'function') {
     throw new Error(`Need a reviver function (h/createElement). Provide one or use a helper (/react/preact/text)`);
   }
-  const mergeDeep = Boolean(opts.mergeDeep !== false);
 
-  const elementMap = old => {
+  return new Proxy(reviver, { apply: baseApply, get: baseGet });
+
+  function baseApply(reviver, thisArg, args) {
+    let [component, ...rest] = args;
+    let { props, children } = _.getPropsAndChildren(rest);
+    component = sortComponent(component);
+    props = sortProps(props, component, ...children);
+    children = sortChildren(children);
+    return reviver(component, props, ...children);
+  }
+
+  function baseGet(t, component) {
+    component = sortComponent(component);
+    let props;
+    if (opts.tagClass) {
+      props = { class: [String(component)] }
+    }
+    const baseGet = (...args) => deepReviver.call({ component, props }, ...args);
+    return new Proxy(baseGet, { get: deepGet.bind({ component, props }) })
+  }
+
+  function deepReviver(...args) {
+    let { props, children } = _.getPropsAndChildren(args);
+    props = mergePrevProps(this.props, ...(this.prevProps || []), props);
+    props = sortProps(props, this.component, ...children);
+    children = sortChildren(children);
+    const element = reviver(this.component, props, ...children);
+    element[_.symbol] = true;
+    return element;
+  }
+
+  function deepGet(t, className) {
+    const prevProps = [...(this.prevProps || []), { class: className }];
+    const baseGet = (...args) => deepReviver.call({ ...this, prevProps }, ...args);
+    return new Proxy(baseGet, { get: deepGet.bind({ ...this, prevProps }) });
+  }
+
+  function sortComponent(component) {
+    component = elementMap(component);
+    if (!component) { throw new Error(`Need a component as first argument, received {${component}}`) }
+    return component;
+  }
+
+  function sortProps(props, component, ...children) {
+    if (props && props.class) {
+      if (typeof props.class === 'string') {
+        //
+      } else if (Array.isArray(props.class)) {
+        props.class = props.class.join(' ')
+      } else {
+        console.error(props.class);
+        throw new Error(`This shouldn't have happened. Class is neither string nor Array`)
+      }
+    }
+    applyKeyMap(props, component, ...children);
+    return props;
+  }
+
+  function sortChildren(children) {
+    // if (opts.flatChildren && children && children.length) {
+    //   children = _.flat(children);
+    // }
+    if (opts.filterFalseyChildren && children && children.length) {
+      children = children.filter(Boolean);
+    }
+    return children;
+  }
+
+  function mergePrevProps(...prevProps) {
+    if (!prevProps.filter(Boolean).length) return null;
+    const merged = {};
+    for (const props of prevProps) {
+      for (const key in props) {
+        if (key === 'class') {
+          merged.class = sortClass(merged.class, props.class);
+        } else {
+          merged[key] = props[key];
+        }
+      }
+    }
+    return merged;
+  }
+
+  function sortClass(...classes) {
+    let final = [];
+    for (const classProp of classes) {
+      if (!classProp) continue;
+      if (typeof classProp === 'string') {
+        final.push(classProp);
+      } else if (Array.isArray(classProp)) {
+        final.push(...classProp);
+      } else {
+        final.push(...Object.keys(classProp).reduce((arr, key) => arr.concat([classProp[key] && key].filter(Boolean)), []));
+      }
+    }
+    if (opts.dashifyClassnames) {
+      final = final.map(dashify);
+    }
+    if (opts.style) {
+      final = final.map(actual => opts.style[actual] || actual);
+    }
+    return final;
+  }
+
+  function elementMap(old) {
     if (!opts.elementMap || !(old in opts.elementMap)) return old;
     const component = opts.elementMap[old];
     if (!component) { throw new Error(`Invalid elementMap: {${old}: ${component}}`) }
     return component;
   }
 
-  const applyKeyMap = (props, ...rest) => {
+  function applyKeyMap(props, ...rest) {
     if (!props || !opts.keyMap) return;
     for (const key in opts.keyMap) {
       const map = opts.keyMap[key];
@@ -30,146 +133,4 @@ module.exports = (hh, opts = {}) => {
     }
     return props;
   }
-
-  return new Proxy(hh, {
-    apply: (hh, that, args) => {
-      let [component, ...rest] = args;
-      component = elementMap(component);
-      if (!component) { throw new Error(`Need a component as first argument, received {${component}}`) }
-      let { props, children } = _.getPropsAndChildren(rest);
-      if (props && Array.isArray(props.class)) {
-        props.class = props.class.join(' ')
-      }
-      if (opts.flatChildren && children && children.length) {
-        children = _.flat(children);
-      }
-      if (opts.filterFalseyChildren && children && children.length) {
-        children = children.filter(Boolean);
-      }
-      applyKeyMap(props, component, ...children);
-      return hh(component, props, ...children);
-    },
-    get: (t, component) => {
-      component = elementMap(component);
-      const h = (...args) => {
-        // console.log(`args:`, args);
-        let { props, children } = _.getPropsAndChildren(args);
-        if (opts.flatChildren && children && children.length) {
-          children = _.flat(children);
-        }
-        if (opts.filterFalseyChildren && children && children.length) {
-          children = children.filter(Boolean);
-        }
-        // if (!props.class) {
-        //   props.class = [];
-        // }
-        if (opts.tagClass) {
-          if (!props) props = {};
-          if (!props.class) props.class = [];
-        }
-        if (props && props.class) {
-          if (!Array.isArray(props.class)) {
-            props.class = props.class.split(' ');
-          }
-          if (opts.tagClass && typeof component === 'string') {
-            props.class.push(component);
-          }
-          if (opts.style) {
-            const additionalClasses = Object.keys(opts.style).filter(_ => props.class.some(__ => _ === __));
-            props.class.push(...(additionalClasses.map(_ => opts.style[_])));
-          }
-          if (Array.isArray(props.class)) {
-            props.class = props.class.join(' ').trim();
-          }
-          if (!props.class) {
-            delete props.class;
-          }
-        }
-        // console.log({ props, children });
-        let ret;
-        if (props === undefined) {
-          if (children.length) throw new Error(`This shouldn't have happened`);
-          ret = hh(component) || {};
-        } else {
-          applyKeyMap(props, component, ...children);
-          ret = hh(component, props, ...children) || {};
-        }
-        // let ret = hh(component, props, ...children) || {};
-        // if (children && children.length) {
-        //   ret = hh(component, props, children) || {};
-        // } else {
-        //   ret = hh(component, props) || {};
-        // }
-        ret[_.symbol] = true;
-        return ret;
-      }
-      return re();
-
-      function re(prev = [], prevProp) {
-        // console.log({ prev, prevProp });
-        if (typeof prevProp !== 'string') {
-          // console.log(prevProp, '->null');
-          // prevProp = null;
-        }
-
-        const getRetFn = prop => (...args) => {
-          // console.log(`args:`, args);
-          // args = args.filter(Boolean);
-          if (!args.length) {
-            // console.log(1);
-            const props = prevProp ? _.mergeProps({}, _.ifToClass(prevProp), ...prev, mergeDeep) : prevProp;
-            return h(props);
-            // return h(props, []);
-          } else if (_.isTTL(args)) {
-            // console.log(2);
-            const children = _.parseTTL(args);
-            const props = prevProp ? _.mergeProps({}, _.ifToClass(prevProp), ...prev, mergeDeep) : prevProp;
-            // console.log({ props, children });
-            return h(props, ...children);
-            // return h(props, children);
-          } else if (prop && args.length === 1 && (
-              typeof args[0] === 'function'
-              || prop === 'style'
-              // || (typeof args[0] === 'string' && prevProp === 'attr')
-            )) {
-            // console.log(3);
-            // an attribute
-            const arg = args[0];
-            return re([{
-              [prop]: arg
-            }, ...prev])
-          } else if (
-            // all arguments are nodes/strings
-            args.some(arg => (arg !== undefined && arg !== null) && (typeof arg === 'string' || arg[_.symbol] || arg['nodeName']))
-            && !args.some(arg => !((arg !== undefined && arg !== null) && (typeof arg === 'string' || arg[_.symbol] || arg['nodeName'])))
-          ) {
-            // console.log(4);
-            const props = prevProp ? _.mergeProps({}, _.ifToClass(prevProp), ...prev, mergeDeep) : prevProp;
-            const children = args;
-            return h(props, ...children);
-            // return h(props, children);
-          } else {
-            // console.log(5);
-            // default: [props, children] or [props] or [children]
-            let { props, children } = _.getPropsAndChildren(args);
-            if (props) {
-              props = _.mergeProps({}, _.ifToClass(prevProp), ...prev, props, mergeDeep);
-            }
-            return h(props, ...children);
-            // return h(props, children);
-          }
-        };
-
-        return new Proxy(() => {}, {
-          apply: (t, tt, args) => getRetFn(prevProp)(...args),
-          get: (t, prop, recv) => {
-            if (opts.dashifyClassnames) {
-              prop = dashify(prop);
-            }
-            return re([{}, _.ifToClass(prevProp), ...prev], prop);
-          },
-        });
-      }
-    },
-  });
 }
