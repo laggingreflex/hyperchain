@@ -54,7 +54,6 @@ h.span('hi')         // => <span> hi </span>
 h.p('a', 'b')        // => <p> a b </p>
 h.h1({id:'h'}, 'a')  // => <h1 id="h"> b </h1>
 h.span`hi`           // => <span> hi </span>
-h.p`1 ${h.em`2`}`    // => <p>1 <em>2</em></p>
 h.div.class('a')     // => <div class="class"> a </div>
 h.div.class`a`       // => <div class="class"> a </div>
 h.div.some.class()   // => <div class="some class">
