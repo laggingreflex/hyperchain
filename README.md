@@ -42,16 +42,29 @@ npm i hyperchain
 ```js
 import { createElement } from 'react'
 import hyperchain from 'hyperchain'
-
 const h = hyperchain(createElement, opts)
-// or
-const {div, span} = hyperchain(createElement, opts);
+// or with helpers (available: react, preact)
+const h =  require('hyperchain/react')(opts)
+const h =  require('hyperchain/preact')(opts)
 ```
-or with helpers (available: react, preact)
+
 ```js
-const { div, span } =  require('hyperchain/react')(opts)
-const { div, span } =  require('hyperchain/preact')(opts)
+h.div('hi')          // => <div> hi </div>
+h.span('hi')         // => <span> hi </span>
+h.p('a', 'b')        // => <p> a b </p>
+h.h1({id:'h'}, 'a')  // => <h1 id="h"> b </h1>
+h.span`hi`           // => <span> hi </span>
+h.p`1 ${h.em`2`}`    // => <p>1 <em>2</em></p>
+h.div.class('a')     // => <div class="class"> a </div>
+h.div.class`a`       // => <div class="class"> a </div>
+h.div.some.class()   // => <div class="some class">
+h.div.someClass()    // => <div class="someClass">
+h.div.someClass()    // => <div class="some-class">   (opts.dashifyClassnames: true)
+h.div()              // => <div class="div">          (opts.tagClass: true)
+h.div.CSS()          // => <div class="MODULES">      (opts.style: {CSS:'MODULES'})
+h.div(1, 0, null, 2) // => <div> 1 2 </div>           (opts.filterFalseyChildren: true)
 ```
+
 
 ### API
 
@@ -63,17 +76,17 @@ hyperchain(createElement, options)
 * **`options`** `[object]`
 
   * **`style`** `[object]` Uses [CSS Modules]-compatible styles object to add appropriate classnames. See [hyperstyles]
+  * **`stylePreserveNames`** `[object]` Preserves original classnames in addition to CSS Module names replaced by `opts.style`
   * **`dashifyClassnames`** `[boolean]` Turns `.className` to `class-name`
   * **`tagClass`** `[boolean]` Adds tag-name as an additional class-name (which is also `opts.style` aware)
   * **`filterFalseyChildren`** `[boolean]` Filters out [falsey] children
-  * **`flatChildren`** `[boolean]` [Flat]tens children array(s)
   * **`elementMapMap`** `[object]` Map tagNames or components to something else
   * **`keyMap`** `[object]` Map keys/attrs to something else
 
 ```js
 h.tagName[...className]`innerText`
 h.tagName[...className](...children)
-h.tagName[...className]({...props}, [...children])
+h.tagName[...className]({...props}, ...children)
 ```
 
 * **`tagName`** `[string]` Tag name to use, eg. `.div`
@@ -81,53 +94,6 @@ h.tagName[...className]({...props}, [...children])
 * **`children`** `[array]` Child nodes
 * **`props`** `[object]` Attributes to set as an object, eg. `{id: …}`
 
-
-### Examples
-
-```js
-h.div`Hello World!`
-```
-```js
-// Template literals define innerText
-div`Hello World!`            // => <div>Hello World!</div>
-// .properties define classes
-div.class`Hello World!`      // => <div class="class">…
-div.some.class`Hello World!` // => <div class="some class">…
-div.someClass`Hello World!`  // => <div class="someClass">…
-// with hyperchain(..., {dashifyClassnames: true})
-div.someClass`Hello World!`  // => <div class="some-class">…
-```
-
-```js
-// reusable components
-const yellowBase = h.div.base.style({background: 'yellow'})
-
-const redText = yellowBase.red.style({color: 'red'})
-redText `red text`
-// <div
-//   class="base red"
-//   style="background:yellow; color:red"
-// >
-//   red text
-// </div>
-
-const boldText = yellowBase.bold.style({fontWeight: 'bold'})
-boldText `bold text`
-// <div
-//   class="base bold"
-//   style="background:yellow; font-weight:bold"
-// >
-//   bold text
-// </div>
-```
-
-## Libraries used
-
-
-* **[dashify]** to dashify classNames
-* **[deepmerge]** to merge props
-* **[ority]** to infer arguments better
-* **[proxy-assign]** to merge options with defaults
 
 [dashify]: https://github.com/jonschlinkert/dashify
 [deepmerge]: https://github.com/KyleAMathews/deepmerge
