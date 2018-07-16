@@ -1,7 +1,5 @@
-const td = require('testdouble');
 const assert = require('assert');
 const hyperchain = require('.');
-const _ = require('./utils');
 
 const r = (component, props, ...children) => ({ component, props, children });
 const h = hyperchain(r);
