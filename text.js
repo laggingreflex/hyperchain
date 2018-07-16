@@ -11,15 +11,16 @@ function toString(tag, ...args) {
     .map(prop => {
       const val = props[prop];
       switch (typeof val) {
-        case 'boolean':
         case 'number':
         case 'string':
           return ` ${prop}=${JSON.stringify(val)}`;
+        case 'boolean':
+          return ` ${prop}="${JSON.stringify(val)}"`;
       }
     })
     .filter(Boolean)
     .join('')
     + `>`
-    + (_.flat(children || [])).join('')
+    + (_.flat(children)).join('')
     + `</${tag}>`;
 }

@@ -61,15 +61,8 @@ module.exports = (reviver, opts = {}) => {
   }
 
   function sortProps(props, component, ...children) {
-    if (props && props.class) {
-      if (typeof props.class === 'string') {
-        //
-      } else if (Array.isArray(props.class)) {
-        props.class = props.class.join(' ')
-      } else {
-        console.error(props.class);
-        throw new Error(`This shouldn't have happened. Class is neither string nor Array`)
-      }
+    if (props && props.class && Array.isArray(props.class)) {
+      props.class = props.class.join(' ')
     }
     applyKeyMap(props, component, ...children);
     return props;
@@ -141,6 +134,8 @@ module.exports = (reviver, opts = {}) => {
         delete props[key];
       } else if (typeof map === 'function') {
         map(props, ...rest);
+      } else {
+        throw new Error(`Invalid opts.keyMap Expected a string or a function, got ${typeof map}`);
       }
     }
     return props;

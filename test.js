@@ -8,6 +8,8 @@ const deepIt = (ex, eq) => it(ex, () => assert[typeof eq === 'string' ? 'equal' 
 const _deepIt = deepIt;
 
 /* Basic */
+it('should throw without reviver', () => assert.throws(hyperchain));
+it('should throw without component', () => assert.throws(h));
 deepIt(`h('div')`, {
   component: 'div',
   props: null,
@@ -141,6 +143,11 @@ deepIt(`h.div({class: {object: true, class: false}})`, {
   props: { class: 'object' },
   children: []
 });
+deepIt(`h.div({class: 'prop'})`, {
+  component: 'div',
+  props: { class: 'prop' },
+  children: []
+});
 
 describe('separation', () => {
   const red = h.div.red;
@@ -235,7 +242,7 @@ describe('opts.filterFalseyChildren', () => {
 
 
 describe('opts.elementMap', () => {
-  const h = hyperchain(r, { elementMap: { div: 'p' } });
+  const h = hyperchain(r, { elementMap: { div: 'p', null: null } });
   const deepIt = eval(String(_deepIt));
 
   deepIt(`h.div()`, {
@@ -243,6 +250,8 @@ describe('opts.elementMap', () => {
     props: null,
     children: []
   });
+
+  assert.throws(() => h.null());
 });
 
 describe('opts.keyMap', () => {
@@ -254,6 +263,36 @@ describe('opts.keyMap', () => {
     props: { className: 'class' },
     children: []
   });
+  describe('function', () => {
+    const h = hyperchain(r, {
+      keyMap: {
+        class: (props, component, ...children) => {
+          if (component !== 'fragment') {
+            props.className = props.class;
+          }
+          delete props.class;
+        }
+      }
+    });
+    const deepIt = eval(String(_deepIt));
+
+    deepIt(`h.div.class()`, {
+      component: 'div',
+      props: { className: 'class' },
+      children: []
+    });
+    deepIt(`h.fragment.class()`, {
+      component: 'fragment',
+      props: {},
+      children: []
+    });
+  });
+  describe('other', () => {
+    const h = hyperchain(r, { keyMap: { class: 1 } });
+    const deepIt = eval(String(_deepIt));
+
+    assert.throws(() => h.div.class());
+  });
 });
 
 describe('opts.style', () => {
@@ -263,6 +302,11 @@ describe('opts.style', () => {
   deepIt(`h.div.actual()`, {
     component: 'div',
     props: { class: 'hashed' },
+    children: []
+  });
+  deepIt(`h.div.other()`, {
+    component: 'div',
+    props: { class: 'other' },
     children: []
   });
 });
@@ -288,4 +332,8 @@ describe('text', () => {
   deepIt(`h.div('a', 'b')`, '<div>ab</div>');
   deepIt(`h.div(h.div('a'), 'b', h.div('c'))`, '<div><div>a</div>b<div>c</div></div>');
   deepIt(`h.div({id:'app'})`, '<div id="app"></div>');
+  deepIt(`h.div({bool:false})`, '<div bool="false"></div>');
+  deepIt(`h.div({num:1})`, '<div num=1></div>');
+  deepIt(`h.div()`, '<div></div>');
+  deepIt(`h.div([['a']])`, '<div>a</div>');
 });
