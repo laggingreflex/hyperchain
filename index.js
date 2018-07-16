@@ -4,10 +4,18 @@ const _ = require('./utils');
 const defaultOpts = require('./opts')
 
 module.exports = (reviver, opts = {}) => {
-  opts = proxyAssign(opts, defaultOpts);
   if (typeof reviver !== 'function') {
     throw new Error(`Need a reviver function (h/createElement). Provide one or use a helper (/react/preact/text)`);
   }
+
+  // let reviver_;
+  // [reviver_, reviver] = [reviver, (component, props, ...children) => {
+  //   const element = reviver_(component, props, ...children)
+  //   console.log({ component, props, children, element });
+  //   return element;
+  // }];
+
+  opts = proxyAssign(opts, defaultOpts);
 
   return new Proxy(reviver, { apply: baseApply, get: baseGet });
 
@@ -108,7 +116,11 @@ module.exports = (reviver, opts = {}) => {
       final = final.map(dashify);
     }
     if (opts.style) {
-      final = final.map(actual => opts.style[actual] || actual);
+      if (opts.stylePreserveNames) {
+        final = final.concat(final.map(actual => opts.style[actual]).filter(Boolean));
+      } else {
+        final = final.map(actual => opts.style[actual] || actual);
+      }
     }
     return final;
   }

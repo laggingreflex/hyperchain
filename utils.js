@@ -19,7 +19,13 @@ const childTypes = 'string|number|function|boolean'.split('|');
 
 _.getPropsAndChildren = args => {
 
-  const isChild = it => childTypes.includes(typeof it) || Array.isArray(it) || (it && it[_.symbol]);
+  const isChild = it =>
+    childTypes.includes(typeof it)
+    || Array.isArray(it)
+    || (it && it[_.symbol])
+    // || (it && it.children)
+    // || (it && it.attributes)
+    || (it && it.$$typeof);
 
   let props;
   let children = [];
@@ -29,6 +35,7 @@ _.getPropsAndChildren = args => {
   if (!args || !args.length) {
     //
   } else if (args.length === 1) {
+    // console.log(`args[0][_.symbol]:`, args[0][_.symbol]);
     if (isChild(args[0])) {
       props = null;
       if (Array.isArray(args[0])) {

@@ -107,6 +107,15 @@ deepIt(`h.div('a', h.div('b'), 'c')`, {
     children: ['b']
   }, 'c']
 });
+deepIt(`h.div(h.div({a:1}, 'a'))`, {
+  component: 'div',
+  props: null,
+  children: [{
+    component: 'div',
+    props: { a: 1 },
+    children: ['a']
+  }]
+});
 
 /*classes */
 deepIt(`h.div.class('hi')`, {
@@ -256,6 +265,17 @@ describe('opts.style', () => {
   deepIt(`h.div.actual()`, {
     component: 'div',
     props: { class: 'hashed' },
+    children: []
+  });
+});
+
+describe('opts.stylePreserveNames', () => {
+  const h = hyperchain(r, { style: { actual: 'hashed' }, stylePreserveNames: true });
+  const deepIt = eval(String(_deepIt));
+
+  deepIt(`h.div.actual()`, {
+    component: 'div',
+    props: { class: 'actual hashed' },
     children: []
   });
 });
