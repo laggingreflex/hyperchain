@@ -52,9 +52,8 @@ const h =  require('hyperchain/preact')(opts)
 h.div('hi')          // => <div> hi </div>
 h.span('hi')         // => <span> hi </span>
 h.p('a', 'b')        // => <p> a b </p>
-h.h1({id:'h'}, 'a')  // => <h1 id="h"> a </h1>
-h.div['#id']()       // => <div id="id"></div>
 h.span`hi`           // => <span> hi </span>
+h.div({attr:'a'})    // => <div attr="a"></div>
 h.div.class('a')     // => <div class="class"> a </div>
 h.div.class`a`       // => <div class="class"> a </div>
 h.div.some.class()   // => <div class="some class">
@@ -63,6 +62,7 @@ h.div.someClass()    // => <div class="some-class">   (opts.dashifyClassnames: t
 h.div()              // => <div class="div">          (opts.tagClass: true)
 h.div.CSS()          // => <div class="MODULES">      (opts.style: {CSS:'MODULES'})
 h.div(1, 0, null, 2) // => <div> 1 2 </div>           (opts.filterFalseyChildren: true)
+h.div['#id']()       // => <div id="id"></div>
 ```
 
 
