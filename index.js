@@ -39,11 +39,12 @@ module.exports = (reviver, opts = {}) => {
   }
 
   function deepReviver(...args) {
+    const { component } = this;
     let { props, children } = _.getPropsAndChildren(args);
     props = mergePrevProps(this.props, ...(this.prevProps || []), props);
-    props = sortProps(props, this.component, ...children);
+    props = sortProps(props, component, ...children);
     children = sortChildren(children);
-    const element = reviver(this.component, props, ...children);
+    const element = reviver(component, props, ...children);
     element[_.symbol] = true;
     return element;
   }
@@ -62,7 +63,11 @@ module.exports = (reviver, opts = {}) => {
 
   function sortProps(props, component, ...children) {
     if (props && props.class && Array.isArray(props.class)) {
-      props.class = props.class.join(' ')
+      if (props.class.length) {
+        props.class = props.class.join(' ');
+      } else {
+        delete props.class;
+      }
     }
     applyKeyMap(props, component, ...children);
     return props;
@@ -84,7 +89,7 @@ module.exports = (reviver, opts = {}) => {
     for (const props of prevProps) {
       for (const key in props) {
         if (key === 'class') {
-          merged.class = sortClass(merged.class, props.class);
+          merged.class = sortClass.call({ props: merged }, merged.class, props.class);
         } else {
           merged[key] = props[key];
         }
@@ -107,6 +112,13 @@ module.exports = (reviver, opts = {}) => {
     }
     if (opts.dashifyClassnames) {
       final = final.map(dashify);
+    }
+    for (let i = 0; i < final.length; i++) {
+      const id = final[i];
+      if (id.startsWith('#')) {
+        this.props.id = id.substr(1);
+        final.splice(i, 1);
+      }
     }
     if (opts.style) {
       if (opts.stylePreserveNames) {

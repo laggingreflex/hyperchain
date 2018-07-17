@@ -52,7 +52,8 @@ const h =  require('hyperchain/preact')(opts)
 h.div('hi')          // => <div> hi </div>
 h.span('hi')         // => <span> hi </span>
 h.p('a', 'b')        // => <p> a b </p>
-h.h1({id:'h'}, 'a')  // => <h1 id="h"> b </h1>
+h.h1({id:'h'}, 'a')  // => <h1 id="h"> a </h1>
+h.div['#id']()       // => <div id="id"></div>
 h.span`hi`           // => <span> hi </span>
 h.div.class('a')     // => <div class="class"> a </div>
 h.div.class`a`       // => <div class="class"> a </div>

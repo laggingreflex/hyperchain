@@ -149,6 +149,14 @@ deepIt(`h.div({class: 'prop'})`, {
   children: []
 });
 
+/*id */
+deepIt(`h.div['#id']()`, {
+  component: 'div',
+  props: { id: 'id' },
+  children: []
+});
+
+
 describe('separation', () => {
   const red = h.div.red;
 
@@ -332,6 +340,7 @@ describe('text', () => {
   deepIt(`h.div('a', 'b')`, '<div>ab</div>');
   deepIt(`h.div(h.div('a'), 'b', h.div('c'))`, '<div><div>a</div>b<div>c</div></div>');
   deepIt(`h.div({id:'app'})`, '<div id="app"></div>');
+  deepIt(`h.div['#app']()`, '<div id="app"></div>');
   deepIt(`h.div({bool:false})`, '<div bool="false"></div>');
   deepIt(`h.div({num:1})`, '<div num=1></div>');
   deepIt(`h.div()`, '<div></div>');
