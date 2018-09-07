@@ -6,7 +6,7 @@ module.exports = opts => hyperchain(createElement, Object.assign({
   },
   keyMap: {
     class: (props, component) => {
-      if (component !== Fragment) {
+      if (props.class && component !== Fragment) {
         props.className = props.class;
       }
       delete props.class;
