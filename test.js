@@ -330,6 +330,17 @@ describe('opts.stylePreserveNames', () => {
   });
 });
 
+describe('opts.styleOmitUnused', () => {
+  const h = hyperchain(r, { style: { used: 'hash(used)' }, styleOmitUnused: true });
+  const deepIt = eval(String(_deepIt));
+
+  deepIt(`h.div.used.unused()`, {
+    component: 'div',
+    props: { class: 'hash(used)' },
+    children: []
+  });
+});
+
 
 describe('text', () => {
   const h = require('./text')({});

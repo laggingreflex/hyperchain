@@ -126,6 +126,10 @@ module.exports = (reviver, opts = {}) => {
       } else {
         final = final.map(actual => opts.style[actual] || actual);
       }
+      if (opts.styleOmitUnused) {
+        const used = Object.values(opts.style);
+        final = final.filter(f => used.includes(f));
+      }
     }
     return final;
   }

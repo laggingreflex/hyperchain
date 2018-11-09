@@ -76,7 +76,8 @@ hyperchain(createElement, options)
 * **`options`** `[object]`
 
   * **`style`** `[object]` Uses [CSS Modules]-compatible styles object to add appropriate classnames. See [hyperstyles]
-  * **`stylePreserveNames`** `[object]` Preserves original classnames in addition to CSS Module names replaced by `opts.style`
+  * **`stylePreserveNames`** `[boolean]` Preserves original classnames in addition to CSS Module names replaced by `opts.style`
+  * **`styleOmitUnused`** `[boolean]` Omits classes from elements that aren't listed in `opts.style`
   * **`dashifyClassnames`** `[boolean]` Turns `.className` to `class-name`
   * **`tagClass`** `[boolean]` Adds tag-name as an additional class-name (which is also `opts.style` aware)
   * **`filterFalseyChildren`** `[boolean]` Filters out [falsey] children
