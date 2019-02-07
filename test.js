@@ -5,6 +5,7 @@ const r = (component, props, ...children) => ({ component, props, children });
 const h = hyperchain(r);
 
 const deepIt = (ex, eq) => it(ex, () => assert[typeof eq === 'string' ? 'equal' : 'deepEqual'](eval(ex), eq));
+deepIt.only = (ex, eq) => it.only(ex, () => assert[typeof eq === 'string' ? 'equal' : 'deepEqual'](eval(ex), eq));
 const _deepIt = deepIt;
 
 /* Basic */
