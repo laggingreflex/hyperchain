@@ -20,6 +20,9 @@ _.getPropsAndChildren = args => {
 
   if (!args || !args.length) {
     //
+  } else if (_.isTTL(args)) {
+    props = null;
+    children = _.parseTTL(...args);
   } else if (args.length === 1) {
     if (_.isChild(args[0])) {
       props = null;
@@ -42,4 +45,8 @@ _.getPropsAndChildren = args => {
   }
 
   return { props, children };
-}
+};
+
+// TTL = Tagged Template Literals
+_.isTTL = args => Array.isArray(args[0]) && 'raw' in args[0];
+_.parseTTL = (str, ...keys) => str.reduce((children, child, i) => children.concat([child, keys[i] !== undefined && keys[i]].filter(Boolean)), []);

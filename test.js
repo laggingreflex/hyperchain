@@ -116,6 +116,22 @@ deepIt(`h.div(h.div({a:1}, 'a'))`, {
     children: ['a']
   }]
 });
+deepIt("h.div`Hello ${'world'}`", {
+  component: 'div',
+  props: null,
+  children: [
+    'Hello ', 'world'
+  ]
+});
+deepIt("h.div`Hello ${'world'}, what's ${h.div`up`}?`", {
+  component: 'div',
+  props: null,
+  children: [
+    'Hello ', 'world', ", what's ",
+    { component: 'div', props: null, children: ['up'] },
+    '?'
+  ]
+});
 
 /*classes */
 deepIt(`h.div.class('hi')`, {
