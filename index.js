@@ -67,9 +67,9 @@ module.exports = (reviver, opts = {}) => {
   }
 
   function sortChildren(children) {
-    // if (opts.flatChildren && children && children.length) {
-    //   children = _.flat(children);
-    // }
+    if (opts.flatChildren && children && children.length) {
+      children = _.flat(children);
+    }
     if (opts.filterFalseyChildren && children && children.length) {
       children = children.filter(Boolean);
     }
