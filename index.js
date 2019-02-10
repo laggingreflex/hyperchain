@@ -8,13 +8,6 @@ module.exports = (reviver, opts = {}) => {
     throw new Error(`Need a reviver function (h/createElement). Provide one or use a helper (/react/preact/text)`);
   }
 
-  // let reviver_;
-  // [reviver_, reviver] = [reviver, (component, props, ...children) => {
-  //   const element = reviver_(component, props, ...children)
-  //   console.log({ component, props, children, element });
-  //   return element;
-  // }];
-
   opts = proxyAssign(opts, defaultOpts);
 
   return new Proxy(reviver, { apply: baseApply, get: baseGet });
