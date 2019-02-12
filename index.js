@@ -23,9 +23,10 @@ module.exports = (reviver, opts = {}) => {
 
   function baseGet(t, component) {
     component = sortComponent(component);
+    const tagName = String(component);
     let props;
-    if (opts.tagClass) {
-      props = { class: [String(component)] }
+    if (opts.tagClass || (opts.style && tagName in opts.style)) {
+      props = { class: [tagName] }
     }
     const baseGet = (...args) => deepReviver.call({ component, props }, ...args);
     return new Proxy(baseGet, { get: deepGet.bind({ component, props }) })
