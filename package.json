@@ -1,6 +1,6 @@
 {
   "name": "hyperchain",
-  "version": "0.15.3",
+  "version": "0.15.4",
   "description": "hyperscript with chaining",
   "main": "index.js",
   "repository": "laggingreflex/hyperchain",
