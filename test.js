@@ -252,6 +252,11 @@ describe('opts.dashifyClassnames', () => {
     props: { class: 'dashed-class' },
     children: []
   });
+  deepIt(`h.div.dashedClass['#withId']()`, {
+    component: 'div',
+    props: { class: 'dashed-class', id: 'with-id' },
+    children: []
+  });
 });
 
 describe('opts.filterFalseyChildren', () => {

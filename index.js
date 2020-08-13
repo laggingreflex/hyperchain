@@ -105,7 +105,13 @@ module.exports = (reviver, opts = {}) => {
       }
     }
     if (opts.dashifyClassnames) {
-      final = final.map(dashify);
+      final = final.map(f => {
+        if (f.startsWith('#')) {
+          return '#' + dashify(f.substr(1));
+        } else {
+          return dashify(f);
+        }
+      });
     }
     for (let i = 0; i < final.length; i++) {
       const id = final[i];
