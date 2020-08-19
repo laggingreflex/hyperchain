@@ -160,6 +160,16 @@ deepIt(`h.div({class: {object: true, class: false}})`, {
   props: { class: 'object' },
   children: []
 });
+deepIt(`h.div.prop({class: ['array']})`, {
+  component: 'div',
+  props: { class: 'prop array' },
+  children: []
+});
+deepIt(`h.div.prop({class: {true: true, false: false}})`, {
+  component: 'div',
+  props: { class: 'prop true' },
+  children: []
+});
 deepIt(`h.div({class: 'prop'})`, {
   component: 'div',
   props: { class: 'prop' },
@@ -378,4 +388,25 @@ describe('text', () => {
   deepIt(`h.div({num:1})`, '<div num=1></div>');
   deepIt(`h.div()`, '<div></div>');
   deepIt(`h.div([['a']])`, '<div>a</div>');
+});
+
+describe('special', () => {
+  it('class as both prop and object', () => {
+    const h = hyperchain(r, {
+      style: {
+        prop: 'prop_hash',
+        object: 'object_hash',
+      },
+      dashifyClassnames: true,
+      tagClass: true,
+      filterFalseyChildren: true,
+    });
+    assert.deepEqual(h.div.prop({ class: { object: true } }), {
+      component: 'div',
+      props: {
+        class: 'div prop_hash object_hash'
+      },
+      children: [],
+    })
+  })
 });
