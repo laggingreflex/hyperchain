@@ -1,7 +1,8 @@
 const dashify = require('dashify');
 const proxyAssign = require('proxy-assign');
+const Style = require('./style');
 const _ = require('./utils');
-const defaultOpts = require('./opts')
+const defaultOpts = require('./opts');
 
 module.exports = (reviver, opts = {}) => {
   if (typeof reviver !== 'function') {
@@ -9,6 +10,7 @@ module.exports = (reviver, opts = {}) => {
   }
 
   opts = proxyAssign(opts, defaultOpts);
+  const style = new Style(opts.style);
 
   return new Proxy(reviver, { apply: baseApply, get: baseGet });
 
@@ -25,7 +27,7 @@ module.exports = (reviver, opts = {}) => {
     component = sortComponent(component);
     const tagName = String(component);
     let props;
-    if (opts.tagClass || (opts.style && tagName in opts.style)) {
+    if (opts.tagClass || style.has(tagName)) {
       props = { class: [tagName] }
     }
     const baseGet = (...args) => deepReviver.call({ component, props }, ...args);
@@ -120,15 +122,15 @@ module.exports = (reviver, opts = {}) => {
         final.splice(i, 1);
       }
     }
-    if (opts.style) {
+    if (style.true) {
       if (opts.stylePreserveNames) {
-        final = final.concat(final.map(actual => opts.style[actual]).filter(Boolean));
+        final = _.flat(final.concat(final.map(actual => style.get(actual)))).filter(Boolean);
       } else {
-        final = final.map(actual => opts.style[actual] || actual);
+        final = _.flat(final.map(actual => style.get(actual) || actual)).filter(Boolean);
       }
       if (opts.styleOmitUnused) {
-        const used = Object.values(opts.style);
-        final = final.filter(f => used.includes(f));
+        const used = style.values;
+        final = final.filter(f => used.has(f));
       }
     }
     return final;

@@ -351,6 +351,17 @@ describe('opts.style', () => {
   });
 });
 
+describe('opts.style[]', () => {
+  const h = hyperchain(r, { style: [{ actual: ['a'] }, { actual: ['b'] }] });
+  const deepIt = eval(String(_deepIt));
+
+  deepIt(`h.div.actual()`, {
+    component: 'div',
+    props: { class: 'a b' },
+    children: []
+  });
+});
+
 describe('opts.stylePreserveNames', () => {
   const h = hyperchain(r, { style: { actual: 'hashed' }, stylePreserveNames: true });
   const deepIt = eval(String(_deepIt));

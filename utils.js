@@ -4,6 +4,8 @@ _.symbol = Symbol('symbol');
 
 _.flat = a => a.reduce((f, v) => Array.isArray(v) ? f.concat(_.flat(v)) : f.concat(v), []);
 
+_.arrify = a => (Array.isArray(a) ? a : typeof a === undefined ? [] : [a]).filter(a => Boolean(typeof a !== undefined));
+
 const childTypes = 'string|number|function|boolean'.split('|');
 _.isChild = it =>
   childTypes.includes(typeof it)
