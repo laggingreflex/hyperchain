@@ -6,6 +6,8 @@ _.flat = a => a.reduce((f, v) => Array.isArray(v) ? f.concat(_.flat(v)) : f.conc
 
 _.arrify = a => (Array.isArray(a) ? a : typeof a === undefined ? [] : [a]).filter(a => Boolean(typeof a !== undefined));
 
+_.deDupe = a => Array.from(new Set(a));
+
 const childTypes = 'string|number|function|boolean'.split('|');
 _.isChild = it =>
   childTypes.includes(typeof it)

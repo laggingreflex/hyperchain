@@ -60,7 +60,7 @@ module.exports = (reviver, opts = {}) => {
   function sortProps(props, component, ...children) {
     if (props && props.class && Array.isArray(props.class)) {
       if (props.class.length) {
-        props.class = props.class.join(' ');
+        props.class = _.deDupe(props.class).join(' ');
       } else {
         delete props.class;
       }

@@ -183,6 +183,13 @@ deepIt(`h.div['#id']()`, {
   children: []
 });
 
+/*deDupe */
+deepIt(`h.div.a.a.b.b()`, {
+  component: 'div',
+  props: { class: 'a b' },
+  children: []
+});
+
 
 describe('separation', () => {
   const red = h.div.red;
