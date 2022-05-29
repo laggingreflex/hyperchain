@@ -5,8 +5,9 @@ module.exports = class Style {
     const styles = this.styles = _.arrify(style);
     this.true = Boolean(styles.length);
     const values = this.values = new Set
-    for (const style of styles) {
-      if (!style) continue
+    for (let style of styles) {
+      if (!style) continue;
+      if (style.default) style = style.default;
       for (const key in style) {
         this.values.add(style[key]);
       }
@@ -14,17 +15,21 @@ module.exports = class Style {
   }
 
   has(key) {
-    for (const style of this.styles) {
+    for (let style of this.styles) {
       if (!style) continue
+      if (style.default) style = style.default;
       if (key in style) return true;
     }
     false;
   }
 
   get(key) {
+    console.log('style.get', {key, 'this.styles': this.styles});
     const styles = [];
-    for (const style of this.styles) {
+    for (let style of this.styles) {
+      console.log('style.get', {key, style});
       if (!style) continue
+      if (style.default) style = style.default;
       if (key in style) styles.push(style[key]);
     }
     if (styles.length) return styles;
