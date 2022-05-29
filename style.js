@@ -24,10 +24,8 @@ module.exports = class Style {
   }
 
   get(key) {
-    console.log('style.get', {key, 'this.styles': this.styles});
     const styles = [];
     for (let style of this.styles) {
-      console.log('style.get', {key, style});
       if (!style) continue
       if (style.default) style = style.default;
       if (key in style) styles.push(style[key]);
